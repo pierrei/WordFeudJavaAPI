@@ -1,10 +1,7 @@
 package nu.mrpi.wordfeudapi;
 
 import nu.mrpi.util.SHA1;
-import nu.mrpi.wordfeudapi.domain.Game;
-import nu.mrpi.wordfeudapi.domain.Status;
-import nu.mrpi.wordfeudapi.domain.Tile;
-import nu.mrpi.wordfeudapi.domain.User;
+import nu.mrpi.wordfeudapi.domain.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -22,14 +19,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author Pierre Ingmansson (pierre@ingmansson.se)
+ * @author Pierre Ingmansson
  */
 public class WordFeudClient {
-    public void useSessionId(String sessionId) {
-        this.sessionId = sessionId;
-        this.loggedInUser = new User();
-        loggedInUser.setSessionId(sessionId);
-    }
+
 
     enum RuleSet {
         American,
@@ -39,24 +32,29 @@ public class WordFeudClient {
         Swedish,
         English,
         Spanish,
-        French
+        French;
     }
+
 
     enum BoardType {
         Normal,
-        Random
+        Random;
     }
-
-
     private String sessionId;
-    private User loggedInUser = null;
 
+
+    private User loggedInUser = null;
     private HttpClient httpClient;
-    private Pattern pattern;
+    private static final Pattern SESSION_ID_COOKIE_PATTERN = Pattern.compile("sessionid=(.*?);");
 
     public WordFeudClient() {
         httpClient = new DefaultHttpClient();
-        pattern = Pattern.compile("sessionid=(.*?);");
+    }
+
+    public void useSessionId(String sessionId) {
+        this.sessionId = sessionId;
+        this.loggedInUser = new User();
+        loggedInUser.setSessionId(sessionId);
     }
 
     public User logon(String email, String password) {
@@ -152,14 +150,22 @@ public class WordFeudClient {
     }
 
     /**
-     * Place a word on the board. This should be much easier.
-     *
-     * @param gameID
-     * @param gameID
-     * @param ruleset
-     * @param tiles
-     * @param word
-     * @return Object
+     * Place a solution for the given game
+     * @param game The game to place solution for
+     * @param solution The solution to place
+     * @return The WordFeud API response
+     */
+    public String place(Game game, Solution solution) {
+        return place(game.getId(), game.getRuleset(), solution.getTiles(), solution.getWord().toCharArray());
+    }
+
+    /**
+     * Place a word on the board.
+     * @param gameID The ID of the game to place the word on
+     * @param ruleset The ruleset the game is using
+     * @param tiles The tiles to place (only the tiles to be placed = tiles from the users rack)
+     * @param word The whole word to place (including tiles already on the board)
+     * @return The WordFeud API response
      */
     public String place(int gameID, int ruleset, Tile[] tiles, char[] word) {
         String path = "/game/" + gameID + "/move/";
@@ -240,7 +246,7 @@ public class WordFeudClient {
 
     private String extractSessionIdFromCookie(Header cookie) {
         String cookieValue = cookie.getValue();
-        Matcher matcher = pattern.matcher(cookieValue);
+        Matcher matcher = SESSION_ID_COOKIE_PATTERN.matcher(cookieValue);
         if (matcher.find()) {
             return matcher.group(1);
         }

@@ -13,7 +13,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 /**
- * @author Pierre Ingmansson (pierre@ingmansson.se)
+ * @author Pierre Ingmansson
  */
 public class GameTest {
     @Test

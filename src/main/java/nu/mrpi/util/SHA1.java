@@ -1,7 +1,7 @@
 package nu.mrpi.util;
 
 /**
- * @author Pierre Ingmansson (pierre@ingmansson.se)
+ * @author Pierre Ingmansson
  */
 
 import java.io.UnsupportedEncodingException;

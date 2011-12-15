@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import java.util.Arrays;
 
 /**
- * @author Pierre Ingmansson (pierre@ingmansson.se)
+ * @author Pierre Ingmansson
  */
 public class Game {
     private double updated;

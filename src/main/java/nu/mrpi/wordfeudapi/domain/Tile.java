@@ -1,7 +1,7 @@
 package nu.mrpi.wordfeudapi.domain;
 
 /**
- * @author Pierre Ingmansson (pierre@ingmansson.se)
+ * @author Pierre Ingmansson
  */
 public class Tile {
     private int x;

@@ -3,7 +3,7 @@ package nu.mrpi.wordfeudapi.domain;
 import com.google.gson.Gson;
 
 /**
- * @author Pierre Ingmansson (pierre@ingmansson.se)
+ * @author Pierre Ingmansson
  */
 public class User{
     private String username;

@@ -1,7 +1,7 @@
 package nu.mrpi.wordfeudapi;
 
 /**
- * @author Pierre Ingmansson (pierre@ingmansson.se)
+ * @author Pierre Ingmansson
  */
 public class WordFeudException extends RuntimeException {
     public WordFeudException() {
