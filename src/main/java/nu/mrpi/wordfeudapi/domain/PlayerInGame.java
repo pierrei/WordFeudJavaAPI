@@ -1,5 +1,7 @@
 package nu.mrpi.wordfeudapi.domain;
 
+import nu.mrpi.util.ArrayUtil;
+
 /**
  * @author Pierre Ingmansson
  */
@@ -9,7 +11,7 @@ public class PlayerInGame {
     private int score;
     private int id;
     private double avatar_updated;
-    private char[] rack;
+    private String[] rack;
 
     public String getUsername() {
         return username;
@@ -32,7 +34,7 @@ public class PlayerInGame {
     }
 
     public char[] getRack() {
-        return rack;
+        return ArrayUtil.convertToCharArray(rack);
     }
 
     @Override

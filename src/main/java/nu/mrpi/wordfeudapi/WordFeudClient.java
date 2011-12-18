@@ -40,6 +40,7 @@ public class WordFeudClient {
         Normal,
         Random;
     }
+
     private String sessionId;
 
 
@@ -74,9 +75,10 @@ public class WordFeudClient {
     }
 
     /**
-     * Accept an invite.
+     * Accept an invite
      *
-     * @param inviteID Invite ID
+     * @param inviteID The invite ID
+     * @return The WordFeud API response
      */
     public String acceptInvite(int inviteID) {
         // 'access_denied'
@@ -86,25 +88,23 @@ public class WordFeudClient {
     }
 
     /**
-     * Reject an invite.
+     * Reject an invite
      *
-     * @param inviteID Invite ID
+     * @param inviteId The invite ID
+     * @return The WordFeud API response
      */
-    public String rejectInvite(int inviteID)
-    {
-        // 'access_denied'
-        String path = "/invite/" + inviteID + "/reject/";
+    public String rejectInvite(int inviteId) {
+        String path = "/invite/" + inviteId + "/reject/";
 
         return callAPI(path).toString();
     }
 
     /**
-     * Gets notifications!
+     * Get the pending notifications of the current user
      *
-     * @return The notifications
+     * @return The WordFeud API response
      */
-    public String getNotifications()
-    {
+    public String getNotifications() {
         String path = "/user/notifications/";
 
         return callAPI(path).toString();
@@ -132,12 +132,23 @@ public class WordFeudClient {
         }
     }
 
+    /**
+     * Get a specific board
+     *
+     * @param boardId The id of the board to get
+     * @return The WordFeud API response
+     */
     public String getBoard(int boardId) {
         String path = "/board/" + boardId + "/";
 
         return callAPI(path).toString();
     }
 
+    /**
+     * Get the status of the current user
+     *
+     * @return The status
+     */
     public Status getStatus() {
         String path = "/user/status/";
 
@@ -151,23 +162,25 @@ public class WordFeudClient {
 
     /**
      * Place a solution for the given game
-     * @param game The game to place solution for
+     *
+     * @param game     The game to place solution for
      * @param solution The solution to place
-     * @return The WordFeud API response
+     * @return The placement result
      */
-    public String place(Game game, Solution solution) {
+    public PlaceResult place(Game game, Solution solution) {
         return place(game.getId(), game.getRuleset(), solution.getTiles(), solution.getWord().toCharArray());
     }
 
     /**
      * Place a word on the board.
-     * @param gameID The ID of the game to place the word on
+     *
+     * @param gameID  The ID of the game to place the word on
      * @param ruleset The ruleset the game is using
-     * @param tiles The tiles to place (only the tiles to be placed = tiles from the users rack)
-     * @param word The whole word to place (including tiles already on the board)
-     * @return The WordFeud API response
+     * @param tiles   The tiles to place (only the tiles to be placed = tiles from the users rack)
+     * @param word    The whole word to place (including tiles already on the board)
+     * @return The placement result
      */
-    public String place(int gameID, int ruleset, Tile[] tiles, char[] word) {
+    public PlaceResult place(int gameID, int ruleset, Tile[] tiles, char[] word) {
         String path = "/game/" + gameID + "/move/";
 
         HashMap<String, Object> parameters = new HashMap<String, Object>();
@@ -175,9 +188,44 @@ public class WordFeudClient {
         parameters.put("ruleset", ruleset);
         parameters.put("word", word);
 
-        return callAPI(path, toJSON(parameters)).toString();
+        JSONObject json = callAPI(path, toJSON(parameters));
+        try {
+            return PlaceResult.fromJson(json.getString("content").toString());
+        } catch (JSONException e) {
+            throw new RuntimeException("Could not deserialize JSON", e);
+        }
     }
 
+    /**
+     * Pass a game
+     *
+     * @param game The game to pass
+     * @return The WordFeud API response
+     */
+    public String pass(final Game game) {
+        return pass(game.getId());
+    }
+
+    /**
+     * Pass a game
+     *
+     * @param gameId The id of the game
+     * @return The WordFeud API response
+     */
+    public String pass(final int gameId) {
+        String path = "/game/" + gameId + "/pass/";
+
+        return callAPI(path).toString();
+    }
+
+    /**
+     * Create a new account
+     *
+     * @param username The username of the new user
+     * @param email    The email of the new user
+     * @param password The password of the new user
+     * @return The WordFeud API response
+     */
     public String createAccount(String username, String email, String password) {
         String path = "/user/create/";
         HashMap<String, String> parameters = new HashMap<String, String>();
