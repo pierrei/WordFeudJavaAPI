@@ -4,6 +4,8 @@ package nu.mrpi.wordfeudapi.domain;
  * @author Pierre Ingmansson
  */
 public class Tile {
+    public static final char WILDCARD = '*';
+    
     private int x;
     private int y;
     private String character;
@@ -46,5 +48,15 @@ public class Tile {
             ret[i] = new Object[] {tile.getX(), tile.getY(), tile.getCharacter(), tile.isWildcard()};
         }
         return ret;
+    }
+
+    @Override
+    public String toString() {
+        return "Tile{" +
+                "x=" + x +
+                ", y=" + y +
+                ", character='" + character + '\'' +
+                ", wildcard=" + wildcard +
+                '}';
     }
 }

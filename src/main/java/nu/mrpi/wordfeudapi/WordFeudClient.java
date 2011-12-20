@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
  */
 public class WordFeudClient {
 
-
     enum RuleSet {
         American,
         Norwegian,
@@ -35,14 +34,12 @@ public class WordFeudClient {
         French;
     }
 
-
     enum BoardType {
         Normal,
         Random;
     }
 
     private String sessionId;
-
 
     private User loggedInUser = null;
     private HttpClient httpClient;
@@ -174,14 +171,14 @@ public class WordFeudClient {
     /**
      * Place a word on the board.
      *
-     * @param gameID  The ID of the game to place the word on
+     * @param gameId  The ID of the game to place the word on
      * @param ruleset The ruleset the game is using
      * @param tiles   The tiles to place (only the tiles to be placed = tiles from the users rack)
      * @param word    The whole word to place (including tiles already on the board)
      * @return The placement result
      */
-    public PlaceResult place(int gameID, int ruleset, Tile[] tiles, char[] word) {
-        String path = "/game/" + gameID + "/move/";
+    public PlaceResult place(int gameId, int ruleset, Tile[] tiles, char[] word) {
+        String path = "/game/" + gameId + "/move/";
 
         HashMap<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("move", Tile.convert(tiles));
@@ -216,6 +213,61 @@ public class WordFeudClient {
         String path = "/game/" + gameId + "/pass/";
 
         return callAPI(path).toString();
+    }
+
+    /**
+     * Swap letters in given game
+     * @param game The game to swap tiles for
+     * @param duplicateLetters The letters to swap
+     * @return The WordFeud API response
+     */
+    public String swap(Game game, char[] duplicateLetters) {
+        return swap(game.getId(), game.getRuleset(), duplicateLetters);
+    }
+
+    /**
+     * Swap letters in given game
+     * @param gameId The id of the game
+     * @param ruleset The ruleset of the game
+     * @param letters The letters to swap
+     * @return The WordFeud API response
+     */
+    public String swap(int gameId, int ruleset, char[] letters) {
+        String path = "/game/" + gameId + "/swap/";
+
+        HashMap<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("swap", letters);
+        parameters.put("ruleset", ruleset);
+
+        JSONObject json = callAPI(path, toJSON(parameters));
+        return json.toString();
+    }
+
+
+    /**
+     * Send a chat message to a game
+     * @param game The game to send chat on
+     * @param message The message to send
+     * @return The WordFeud API response
+     */
+    public String chat(Game game, String message) {
+        return chat(game.getId(), message);
+    }
+
+    /**
+     * Send a chat message to a game
+     * @param gameId The game ID of the game to send chat on
+     * @param message The message to send
+     * @return The WordFeud API response
+     */
+    public String chat(int gameId, String message) {
+        String path = "/game/" + gameId + "/chat/send/";
+
+        HashMap<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("message", message);
+
+        JSONObject json = callAPI(path, toJSON(parameters));
+        return json.toString();
     }
 
     /**

@@ -90,8 +90,17 @@ public class Game {
         throw new IllegalStateException("Current player not found in game!");
     }
 
-    public char[] getMyRack() {
-        return getMe().getRack();
+    public PlayerInGame getOpponent() {
+        if (players[0].getId() != loggedInUser.getId()) {
+            return players[0];
+        } else if (players[1].getId() != loggedInUser.getId()) {
+            return players[1];
+        }
+        throw new IllegalStateException("Opponent player not found in game!");
+    }
+
+    public Rack getMyRack() {
+        return new Rack(getMe().getRack());
     }
 
     public PlayerInGame[] getPlayers() {
@@ -104,6 +113,10 @@ public class Game {
 
     public String getSecondPlayerName() {
         return players[1].getUsername();
+    }
+
+    public String getOpponentName() {
+        return getOpponent().getUsername();
     }
 
     public int getRuleset() {
@@ -122,7 +135,7 @@ public class Game {
     public String toString() {
         return "Game{" +
                 "updated=" + updated +
-                ", tiles=" + (tiles == null ? null : Arrays.asList(tiles)) +
+                ", tiles=" + (tiles == null ? null : Arrays.asList(getTiles())) +
                 ", isRunning=" + is_running +
                 ", bagCount=" + bag_count +
                 ", id=" + id +
