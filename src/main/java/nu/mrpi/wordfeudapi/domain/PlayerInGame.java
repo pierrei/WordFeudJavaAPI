@@ -34,6 +34,9 @@ public class PlayerInGame {
     }
 
     public char[] getRack() {
+        if (rack == null) {
+            throw new IllegalStateException("Player " + username + " did not have a rack");
+        }
         return ArrayUtil.convertToCharArray(rack);
     }
 
