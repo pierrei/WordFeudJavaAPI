@@ -31,35 +31,35 @@ public class WordFeudClient {
         Swedish,
         English,
         Spanish,
-        French;
+        French
     }
 
     enum BoardType {
         Normal,
-        Random;
+        Random
     }
 
     private String sessionId;
 
     private User loggedInUser = null;
-    private HttpClient httpClient;
+    private final HttpClient httpClient;
     private static final Pattern SESSION_ID_COOKIE_PATTERN = Pattern.compile("sessionid=(.*?);");
 
     public WordFeudClient() {
         httpClient = new DefaultHttpClient();
     }
 
-    public void useSessionId(String sessionId) {
+    public void useSessionId(final String sessionId) {
         this.sessionId = sessionId;
         this.loggedInUser = new User();
         loggedInUser.setSessionId(sessionId);
     }
 
-    public User logon(String email, String password) {
-        String path = "/user/login/email/";
-        String data = "{\"email\":\"" + email + "\",\"password\":\"" + encodePassword(password) + "\"}";
+    public User logon(final String email, final String password) {
+        final String path = "/user/login/email/";
+        final String data = "{\"email\":\"" + email + "\",\"password\":\"" + encodePassword(password) + "\"}";
 
-        JSONObject json = callAPI(path, data);
+        final JSONObject json = callAPI(path, data);
 
         try {
             loggedInUser = User.fromJson(json.getString("content"));
@@ -77,9 +77,9 @@ public class WordFeudClient {
      * @param inviteID The invite ID
      * @return The WordFeud API response
      */
-    public String acceptInvite(int inviteID) {
+    public String acceptInvite(final int inviteID) {
         // 'access_denied'
-        String path = "/invite/" + inviteID + "/accept/";
+        final String path = "/invite/" + inviteID + "/accept/";
 
         return callAPI(path).toString();
     }
@@ -90,8 +90,8 @@ public class WordFeudClient {
      * @param inviteId The invite ID
      * @return The WordFeud API response
      */
-    public String rejectInvite(int inviteId) {
-        String path = "/invite/" + inviteId + "/reject/";
+    public String rejectInvite(final int inviteId) {
+        final String path = "/invite/" + inviteId + "/reject/";
 
         return callAPI(path).toString();
     }
@@ -102,15 +102,15 @@ public class WordFeudClient {
      * @return The WordFeud API response
      */
     public String getNotifications() {
-        String path = "/user/notifications/";
+        final String path = "/user/notifications/";
 
         return callAPI(path).toString();
     }
 
     public Game[] getGames() {
-        String path = "/user/games/";
+        final String path = "/user/games/";
 
-        JSONObject json = callAPI(path);
+        final JSONObject json = callAPI(path);
         try {
             return Game.fromJsonArray(json.getJSONObject("content").getString("games"), loggedInUser);
         } catch (JSONException e) {
@@ -118,15 +118,26 @@ public class WordFeudClient {
         }
     }
 
-    public Game getGame(int gameId) {
-        String path = "/game/" + gameId + "/";
+    public Game getGame(final int gameId) {
+        final String path = "/game/" + gameId + "/";
 
-        JSONObject json = callAPI(path);
+        final JSONObject json = callAPI(path);
         try {
             return Game.fromJson(json.getJSONObject("content").getString("game"), loggedInUser);
         } catch (JSONException e) {
             throw new RuntimeException("Could not deserialize JSON", e);
         }
+    }
+
+
+    /**
+     * Get the board for a given game
+     *
+     * @param game The game to find the board for
+     * @return The board
+     */
+    public Board getBoard(final Game game) {
+        return getBoard(game.getBoard());
     }
 
     /**
@@ -135,10 +146,15 @@ public class WordFeudClient {
      * @param boardId The id of the board to get
      * @return The WordFeud API response
      */
-    public String getBoard(int boardId) {
-        String path = "/board/" + boardId + "/";
+    public Board getBoard(final int boardId) {
+        final String path = "/board/" + boardId + "/";
 
-        return callAPI(path).toString();
+        final JSONObject json = callAPI(path);
+        try {
+            return Board.fromJson(json.getString("content"));
+        } catch (JSONException e) {
+            throw new RuntimeException("Could not deserialize JSON", e);
+        }
     }
 
     /**
@@ -147,9 +163,9 @@ public class WordFeudClient {
      * @return The status
      */
     public Status getStatus() {
-        String path = "/user/status/";
+        final String path = "/user/status/";
 
-        JSONObject json = callAPI(path);
+        final JSONObject json = callAPI(path);
         try {
             return Status.fromJson(json.getString("content"));
         } catch (JSONException e) {
@@ -164,7 +180,7 @@ public class WordFeudClient {
      * @param solution The solution to place
      * @return The placement result
      */
-    public PlaceResult place(Game game, Solution solution) {
+    public PlaceResult place(final Game game, final Solution solution) {
         return place(game.getId(), game.getRuleset(), solution.getTiles(), solution.getWord().toCharArray());
     }
 
@@ -177,17 +193,17 @@ public class WordFeudClient {
      * @param word    The whole word to place (including tiles already on the board)
      * @return The placement result
      */
-    public PlaceResult place(int gameId, int ruleset, Tile[] tiles, char[] word) {
-        String path = "/game/" + gameId + "/move/";
+    public PlaceResult place(final int gameId, final int ruleset, final Tile[] tiles, final char[] word) {
+        final String path = "/game/" + gameId + "/move/";
 
-        HashMap<String, Object> parameters = new HashMap<String, Object>();
+        final HashMap<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("move", Tile.convert(tiles));
         parameters.put("ruleset", ruleset);
         parameters.put("word", word);
 
-        JSONObject json = callAPI(path, toJSON(parameters));
+        final JSONObject json = callAPI(path, toJSON(parameters));
         try {
-            return PlaceResult.fromJson(json.getString("content").toString());
+            return PlaceResult.fromJson(json.getString("content"));
         } catch (JSONException e) {
             throw new RuntimeException("Could not deserialize JSON", e);
         }
@@ -210,63 +226,67 @@ public class WordFeudClient {
      * @return The WordFeud API response
      */
     public String pass(final int gameId) {
-        String path = "/game/" + gameId + "/pass/";
+        final String path = "/game/" + gameId + "/pass/";
 
         return callAPI(path).toString();
     }
 
     /**
      * Swap letters in given game
-     * @param game The game to swap tiles for
+     *
+     * @param game             The game to swap tiles for
      * @param duplicateLetters The letters to swap
      * @return The WordFeud API response
      */
-    public String swap(Game game, char[] duplicateLetters) {
+    public String swap(final Game game, final char[] duplicateLetters) {
         return swap(game.getId(), game.getRuleset(), duplicateLetters);
     }
 
     /**
      * Swap letters in given game
-     * @param gameId The id of the game
+     *
+     * @param gameId  The id of the game
      * @param ruleset The ruleset of the game
      * @param letters The letters to swap
      * @return The WordFeud API response
      */
-    public String swap(int gameId, int ruleset, char[] letters) {
-        String path = "/game/" + gameId + "/swap/";
+    public String swap(final int gameId, final int ruleset, final char[] letters) {
+        final String path = "/game/" + gameId + "/swap/";
 
-        HashMap<String, Object> parameters = new HashMap<String, Object>();
+        final HashMap<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("swap", letters);
         parameters.put("ruleset", ruleset);
 
-        JSONObject json = callAPI(path, toJSON(parameters));
+        final JSONObject json = callAPI(path, toJSON(parameters));
         return json.toString();
     }
 
 
     /**
      * Send a chat message to a game
-     * @param game The game to send chat on
+     *
+     * @param game    The game to send chat on
      * @param message The message to send
      * @return The WordFeud API response
      */
-    public String chat(Game game, String message) {
+    public String chat(final Game game, final String message) {
         return chat(game.getId(), message);
     }
 
     /**
      * Send a chat message to a game
-     * @param gameId The game ID of the game to send chat on
+     *
+     * @param gameId  The game ID of the game to send chat on
      * @param message The message to send
      * @return The WordFeud API response
      */
-    public String chat(int gameId, String message) {
-        String path = "/game/" + gameId + "/chat/send/";
+    public String chat(final int gameId, final String message) {
+        final String path = "/game/" + gameId + "/chat/send/";
 
-        HashMap<String, Object> parameters = new HashMap<String, Object>();
+        final HashMap<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("message", message);
 
-        JSONObject json = callAPI(path, toJSON(parameters));
+        final JSONObject json = callAPI(path, toJSON(parameters));
         return json.toString();
     }
 
@@ -278,9 +298,9 @@ public class WordFeudClient {
      * @param password The password of the new user
      * @return The WordFeud API response
      */
-    public String createAccount(String username, String email, String password) {
-        String path = "/user/create/";
-        HashMap<String, String> parameters = new HashMap<String, String>();
+    public String createAccount(final String username, final String email, final String password) {
+        final String path = "/user/create/";
+        final HashMap<String, String> parameters = new HashMap<String, String>();
         parameters.put("username", username);
         parameters.put("email", email);
         parameters.put("password", encodePassword(password));
@@ -288,11 +308,11 @@ public class WordFeudClient {
         return callAPI(path, toJSON(parameters)).toString();
     }
 
-    private String toJSON(HashMap<String, ?> parameters) {
+    private String toJSON(final HashMap<String, ?> parameters) {
         return new JSONObject(parameters).toString();
     }
 
-    private String encodePassword(String password) {
+    private String encodePassword(final String password) {
         try {
             return SHA1.sha1(password + "JarJarBinks9");
         } catch (Exception e) {
@@ -300,31 +320,31 @@ public class WordFeudClient {
         }
     }
 
-    private JSONObject callAPI(String path) {
+    private JSONObject callAPI(final String path) {
         return callAPI(path, "");
     }
 
-    private JSONObject callAPI(String path, String data) {
+    private JSONObject callAPI(final String path, final String data) {
         try {
-            HttpPost post = new HttpPost("http://game05.wordfeud.com/wf" + path);
+            final HttpPost post = new HttpPost("http://game05.wordfeud.com/wf" + path);
             post.addHeader("Content-Type", "application/json");
             post.addHeader("Accept", "application/json");
-            HttpEntity entity = new StringEntity(data, "UTF-8");
+            final HttpEntity entity = new StringEntity(data, "UTF-8");
             post.setEntity(entity);
 
             if (sessionId != null) {
                 post.addHeader("Cookie", "sessiond=" + sessionId);
             }
 
-            HttpResponse response = httpClient.execute(post);
+            final HttpResponse response = httpClient.execute(post);
 
             if (response.getStatusLine().getStatusCode() == 200) {
-                Header[] cookies = response.getHeaders("Set-Cookie");
+                final Header[] cookies = response.getHeaders("Set-Cookie");
                 if (cookies != null && cookies.length > 0) {
                     sessionId = extractSessionIdFromCookie(cookies[0]);
                 }
-                String responseString = IOUtils.toString(response.getEntity().getContent());
-                JSONObject jsonObject = new JSONObject(responseString);
+                final String responseString = IOUtils.toString(response.getEntity().getContent());
+                final JSONObject jsonObject = new JSONObject(responseString);
 
                 if (!"success".equals(jsonObject.getString("status"))) {
                     throw new WordFeudException("Error when calling API: " + jsonObject.getJSONObject("content").getString("type"));
@@ -344,9 +364,9 @@ public class WordFeudClient {
         }
     }
 
-    private String extractSessionIdFromCookie(Header cookie) {
-        String cookieValue = cookie.getValue();
-        Matcher matcher = SESSION_ID_COOKIE_PATTERN.matcher(cookieValue);
+    private String extractSessionIdFromCookie(final Header cookie) {
+        final String cookieValue = cookie.getValue();
+        final Matcher matcher = SESSION_ID_COOKIE_PATTERN.matcher(cookieValue);
         if (matcher.find()) {
             return matcher.group(1);
         }
