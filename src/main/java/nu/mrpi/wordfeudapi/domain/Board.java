@@ -21,7 +21,7 @@ public class Board {
     @Override
     public String toString() {
         return "Board{" +
-                "board=" + (board == null ? null : Arrays.asList(board)) +
+                "board=" + Arrays.toString(board) +
                 '}';
     }
 }
