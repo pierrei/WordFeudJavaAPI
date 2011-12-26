@@ -23,22 +23,6 @@ import java.util.regex.Pattern;
  */
 public class WordFeudClient {
 
-    enum RuleSet {
-        American,
-        Norwegian,
-        Dutch,
-        Danish,
-        Swedish,
-        English,
-        Spanish,
-        French
-    }
-
-    enum BoardType {
-        Normal,
-        Random
-    }
-
     private String sessionId;
 
     private User loggedInUser = null;
@@ -72,6 +56,26 @@ public class WordFeudClient {
     }
 
     /**
+     * Invite somebody to a game
+     *
+     * @param username The user to invite
+     * @param ruleset The ruleset to use for the game
+     * @param boardType The board type
+     * @return The WordFeud API response
+     */
+    public String invite(String username, RuleSet ruleset, BoardType boardType) {
+        String path = "/invite/new/";
+
+        final HashMap<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("invitee", username);
+        parameters.put("ruleset", ruleset.getApiIntRepresentation());
+        parameters.put("board_type", boardType.getApiStringRepresentation());
+
+        return callAPI(path, toJSON(parameters)).toString();
+        // Errors can be: 'duplicate_invite', 'invalid_ruleset', 'invalid_board_type', 'user_not_found'
+    }
+
+    /**
      * Accept an invite
      *
      * @param inviteID The invite ID
@@ -101,10 +105,15 @@ public class WordFeudClient {
      *
      * @return The WordFeud API response
      */
-    public String getNotifications() {
+    public Notifications getNotifications() {
         final String path = "/user/notifications/";
 
-        return callAPI(path).toString();
+        final JSONObject json = callAPI(path);
+        try {
+            return Notifications.fromJson(json.getString("content"));
+        } catch (JSONException e) {
+            throw new RuntimeException("Could not deserialize JSON", e);
+        }
     }
 
     public Game[] getGames() {
@@ -193,12 +202,12 @@ public class WordFeudClient {
      * @param word    The whole word to place (including tiles already on the board)
      * @return The placement result
      */
-    public PlaceResult place(final int gameId, final int ruleset, final Tile[] tiles, final char[] word) {
+    public PlaceResult place(final int gameId, final RuleSet ruleset, final Tile[] tiles, final char[] word) {
         final String path = "/game/" + gameId + "/move/";
 
         final HashMap<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("move", Tile.convert(tiles));
-        parameters.put("ruleset", ruleset);
+        parameters.put("ruleset", ruleset.getApiIntRepresentation());
         parameters.put("word", word);
 
         final JSONObject json = callAPI(path, toJSON(parameters));
@@ -250,12 +259,12 @@ public class WordFeudClient {
      * @param letters The letters to swap
      * @return The WordFeud API response
      */
-    public String swap(final int gameId, final int ruleset, final char[] letters) {
+    public String swap(final int gameId, final RuleSet ruleset, final char[] letters) {
         final String path = "/game/" + gameId + "/swap/";
 
         final HashMap<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("swap", letters);
-        parameters.put("ruleset", ruleset);
+        parameters.put("ruleset", ruleset.getApiIntRepresentation());
 
         final JSONObject json = callAPI(path, toJSON(parameters));
         return json.toString();
@@ -287,6 +296,29 @@ public class WordFeudClient {
         parameters.put("message", message);
 
         final JSONObject json = callAPI(path, toJSON(parameters));
+        return json.toString();
+    }
+
+    /**
+     * Get all chat messages from a specific game
+     *
+     * @param game The game to fetch chat messages from
+     * @return The WordFeud API response
+     */
+    public String getChatMessages(final Game game) {
+        return getChatMessages(game.getId());
+    }
+
+    /**
+     * Get all chat messages from a specific game
+     *
+     * @param gameId The game ID
+     * @return The WordFeud API response
+     */
+    public String getChatMessages(int gameId) {
+        String path = "/game/" + gameId + "/chat/";
+
+        final JSONObject json = callAPI(path);
         return json.toString();
     }
 

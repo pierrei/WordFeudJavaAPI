@@ -119,8 +119,8 @@ public class Game {
         return getOpponent().getUsername();
     }
 
-    public int getRuleset() {
-        return ruleset;
+    public RuleSet getRuleset() {
+        return RuleSet.fromInt(ruleset);
     }
 
     public boolean isMyTurn() {

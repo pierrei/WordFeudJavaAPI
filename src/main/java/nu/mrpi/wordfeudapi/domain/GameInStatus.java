@@ -12,7 +12,7 @@ public class GameInStatus {
         return updated;
     }
 
-    public int getChat_count() {
+    public int getChatCount() {
         return chat_count;
     }
 
