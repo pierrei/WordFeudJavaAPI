@@ -1,0 +1,58 @@
+{"game":
+{
+    "updated": 1323235732.8699999,
+    "tiles": [
+        [11, 2, "A", false],
+        [11, 3, "X", false],
+        [10, 4, "H", false],
+        [11, 4, "E", false],
+        [12, 4, "L", false],
+        [13, 4, "L", false],
+        [14, 4, "O", false],
+        [10, 5, "O", false],
+        [10, 6, "P", false],
+        [7, 7, "T", false],
+        [8, 7, "I", false],
+        [9, 7, "R", false],
+        [10, 7, "E", false],
+        [11, 7, "S", false]
+    ],
+    "is_running": true,
+    "end_game": 0,
+    "bag_count": 76,
+    "pass_count": 0,
+    "id": 170684861,
+    "current_player": 0,
+    "created": 1322976141.6400001,
+    "last_move": {
+        "move_type": "move",
+        "user_id": 2,
+        "move": [
+            [12, 4, "L", false],
+            [13, 4, "L", false],
+            [14, 4, "O", false]
+        ],
+        "points": 24,
+        "main_word": "HELLO"
+    },
+    "players": [
+        {
+            "username": "user1",
+            "position": 0,
+            "score": 41,
+            "id": 1,
+            "avatar_updated": 1321076274
+        },
+        {
+            "username": "user2",
+            "position": 1,
+            "score": 52,
+            "id": 2,
+            "rack": ["E", "Q", "S", "R", "I", "N", "E"]
+        }
+    ],
+    "chat_count": 2,
+    "board": 0,
+    "move_count": 4,
+    "ruleset": 5
+}}

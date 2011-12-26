@@ -1,6 +1,8 @@
 package nu.mrpi.wordfeudapi.domain;
 
 import com.google.gson.Gson;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -17,13 +19,13 @@ import static org.junit.Assert.assertEquals;
  */
 public class GameTest {
     @Test
-    public void testSerialization() {
+    public void testSerialization() throws JSONException {
         Gson gson = new Gson();
 
         try {
             String json = getContents(new File(Thread.currentThread().getContextClassLoader().getResource("onegame.json").toURI()));
 
-            Game game = gson.fromJson(json, Game.class);
+            Game game = gson.fromJson(new JSONObject(json).getString("game"), Game.class);
             assertEquals(170684861, game.getId());
             assertEquals(76, game.getBagCount());
             assertEquals(14, game.getTiles().length);
