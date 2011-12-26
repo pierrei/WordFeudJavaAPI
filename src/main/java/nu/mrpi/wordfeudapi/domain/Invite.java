@@ -17,8 +17,8 @@ public class Invite {
         return inviter;
     }
 
-    public int getRuleset() {
-        return ruleset;
+    public RuleSet getRuleset() {
+        return RuleSet.fromInt(ruleset);
     }
 
     public String getBoardType() {

@@ -41,9 +41,12 @@ public class WordFeudClient {
 
     public User logon(final String email, final String password) {
         final String path = "/user/login/email/";
-        final String data = "{\"email\":\"" + email + "\",\"password\":\"" + encodePassword(password) + "\"}";
 
-        final JSONObject json = callAPI(path, data);
+        final HashMap<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("email", email);
+        parameters.put("password", encodePassword(password));
+
+        final JSONObject json = callAPI(path, toJSON(parameters));
 
         try {
             loggedInUser = User.fromJson(json.getString("content"));
