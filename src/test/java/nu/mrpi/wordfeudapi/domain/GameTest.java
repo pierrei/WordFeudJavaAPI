@@ -11,7 +11,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -48,7 +47,7 @@ public class GameTest {
             //FileReader always assumes default encoding is OK!
             BufferedReader input = new BufferedReader(new FileReader(aFile));
             try {
-                String line = null; //not declared within while loop
+                String line; //not declared within while loop
                 /*
                 * readLine is a bit quirky :
                 * it returns the content of a line MINUS the newline.
