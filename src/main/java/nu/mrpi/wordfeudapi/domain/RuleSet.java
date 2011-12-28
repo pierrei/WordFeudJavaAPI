@@ -1,31 +1,43 @@
 package nu.mrpi.wordfeudapi.domain;
 
+import java.util.Locale;
+
 /**
-* @author Pierre Ingmansson
-*/
+ * @author Pierre Ingmansson
+ */
 public enum RuleSet {
-    American(0),
-    Norwegian(1),
-    Dutch(2),
-    Danish(3),
-    Swedish(4),
+    American(0, Locale.US),
+    Norwegian(1, Locale.forLanguageTag("no")),
+    Dutch(2, Locale.forLanguageTag("nl")),
+    Danish(3, Locale.forLanguageTag("da")),
+    Swedish(4, Locale.forLanguageTag("sv")),
     English(5),
-    Spanish(6),
-    French(7),
-    StrictSwedish(8);
+    Spanish(6, Locale.forLanguageTag("es")),
+    French(7, Locale.FRENCH),
+    StrictSwedish(8, Locale.forLanguageTag("sv"));
 
     private final int apiIntRepresentation;
+    private final Locale locale;
 
-    RuleSet(int apiIntRepresentation) {
+    RuleSet(final int apiIntRepresentation, final Locale locale) {
         this.apiIntRepresentation = apiIntRepresentation;
+        this.locale = locale;
+    }
+
+    RuleSet(final int apiIntRepresentation) {
+        this(apiIntRepresentation, Locale.ENGLISH);
     }
 
     public int getApiIntRepresentation() {
         return apiIntRepresentation;
     }
 
-    public static RuleSet fromInt(int number) {
-        for (RuleSet ruleSet : values()) {
+    public Locale getLocale() {
+        return locale;
+    }
+
+    public static RuleSet fromInt(final int number) {
+        for (final RuleSet ruleSet : values()) {
             if (ruleSet.apiIntRepresentation == number) {
                 return ruleSet;
             }
@@ -33,8 +45,8 @@ public enum RuleSet {
         throw new IllegalArgumentException("RuleSet for value " + number + " not found!");
     }
 
-    public static RuleSet fromString(String string) {
-        for (RuleSet ruleSet : values()) {
+    public static RuleSet fromString(final String string) {
+        for (final RuleSet ruleSet : values()) {
             if (ruleSet.name().equalsIgnoreCase(string)) {
                 return ruleSet;
             }

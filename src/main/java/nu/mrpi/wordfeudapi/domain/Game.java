@@ -3,6 +3,7 @@ package nu.mrpi.wordfeudapi.domain;
 import com.google.gson.Gson;
 
 import java.util.Arrays;
+import java.util.Locale;
 
 /**
  * @author Pierre Ingmansson
@@ -19,21 +20,21 @@ public class Game {
     private User loggedInUser;
     private int board;
 
-    public static Game fromJson(final String json, User loggedInUser) {
-        Game game = new Gson().fromJson(json, Game.class);
+    public static Game fromJson(final String json, final User loggedInUser) {
+        final Game game = new Gson().fromJson(json, Game.class);
         game.setLoggedInUser(loggedInUser);
         return game;
     }
 
-    public static Game[] fromJsonArray(final String json, User loggedInUser) {
-        Game[] games = new Gson().fromJson(json, Game[].class);
-        for (Game game : games) {
+    public static Game[] fromJsonArray(final String json, final User loggedInUser) {
+        final Game[] games = new Gson().fromJson(json, Game[].class);
+        for (final Game game : games) {
             game.setLoggedInUser(loggedInUser);
         }
         return games;
     }
 
-    private void setLoggedInUser(User loggedInUser) {
+    private void setLoggedInUser(final User loggedInUser) {
         this.loggedInUser = loggedInUser;
     }
 
@@ -41,12 +42,12 @@ public class Game {
         return updated;
     }
 
-    public void setUpdated(double updated) {
+    public void setUpdated(final double updated) {
         this.updated = updated;
     }
 
     public Tile[] getTiles() {
-        Tile[] tiles = new Tile[this.tiles.length];
+        final Tile[] tiles = new Tile[this.tiles.length];
         for (int i = 0, tiles1Length = this.tiles.length; i < tiles1Length; i++) {
             tiles[i] = new Tile(this.tiles[i]);
         }
@@ -57,7 +58,7 @@ public class Game {
         return is_running;
     }
 
-    public void setIsRunning(boolean is_running) {
+    public void setIsRunning(final boolean is_running) {
         this.is_running = is_running;
     }
 
@@ -65,7 +66,7 @@ public class Game {
         return bag_count;
     }
 
-    public void setBagCount(int bag_count) {
+    public void setBagCount(final int bag_count) {
         this.bag_count = bag_count;
     }
 
@@ -73,7 +74,7 @@ public class Game {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(final int id) {
         this.id = id;
     }
 
@@ -121,6 +122,10 @@ public class Game {
 
     public RuleSet getRuleset() {
         return RuleSet.fromInt(ruleset);
+    }
+
+    public Locale getLanguageLocale() {
+        return getRuleset().getLocale();
     }
 
     public boolean isMyTurn() {
