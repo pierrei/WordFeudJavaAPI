@@ -5,24 +5,30 @@ import nu.mrpi.wordfeudapi.domain.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static nu.mrpi.util.MathUtil.random;
 
 /**
  * @author Pierre Ingmansson
  */
 public class WordFeudClient {
 
+    public static final String CONTENT_TYPE_JSON = "application/json";
     private String sessionId;
 
     private User loggedInUser = null;
@@ -30,7 +36,20 @@ public class WordFeudClient {
     private static final Pattern SESSION_ID_COOKIE_PATTERN = Pattern.compile("sessionid=(.*?);");
 
     public WordFeudClient() {
-        httpClient = new DefaultHttpClient();
+        httpClient = createHttpClient();
+    }
+
+    private HttpClient createHttpClient() {
+        final HttpClient httpClient = new DefaultHttpClient();
+
+        final String proxyHost = System.getProperty("proxy.host");
+        final String proxyPort = System.getProperty("proxy.port");
+        if (proxyHost != null) {
+            HttpHost proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
+            httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+        }
+
+        return httpClient;
     }
 
     public void useSessionId(final String sessionId) {
@@ -61,13 +80,13 @@ public class WordFeudClient {
     /**
      * Invite somebody to a game
      *
-     * @param username The user to invite
-     * @param ruleset The ruleset to use for the game
+     * @param username  The user to invite
+     * @param ruleset   The ruleset to use for the game
      * @param boardType The board type
      * @return The WordFeud API response
      */
-    public String invite(String username, RuleSet ruleset, BoardType boardType) {
-        String path = "/invite/new/";
+    public String invite(final String username, final RuleSet ruleset, final BoardType boardType) {
+        final String path = "/invite/new/";
 
         final HashMap<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("invitee", username);
@@ -81,14 +100,18 @@ public class WordFeudClient {
     /**
      * Accept an invite
      *
-     * @param inviteID The invite ID
-     * @return The WordFeud API response
+     * @param inviteId The invite ID
+     * @return The id of the game that just started
      */
-    public String acceptInvite(final int inviteID) {
+    public int acceptInvite(final int inviteId) {
         // 'access_denied'
-        final String path = "/invite/" + inviteID + "/accept/";
+        final String path = "/invite/" + inviteId + "/accept/";
 
-        return callAPI(path).toString();
+        try {
+            return callAPI(path).getJSONObject("content").getInt("id");
+        } catch (JSONException e) {
+            throw new RuntimeException("Could not deserialize JSON", e);
+        }
     }
 
     /**
@@ -318,8 +341,8 @@ public class WordFeudClient {
      * @param gameId The game ID
      * @return The WordFeud API response
      */
-    public String getChatMessages(int gameId) {
-        String path = "/game/" + gameId + "/chat/";
+    public String getChatMessages(final int gameId) {
+        final String path = "/game/" + gameId + "/chat/";
 
         final JSONObject json = callAPI(path);
         return json.toString();
@@ -343,29 +366,13 @@ public class WordFeudClient {
         return callAPI(path, toJSON(parameters)).toString();
     }
 
-    private String toJSON(final HashMap<String, ?> parameters) {
-        return new JSONObject(parameters).toString();
-    }
-
-    private String encodePassword(final String password) {
-        try {
-            return SHA1.sha1(password + "JarJarBinks9");
-        } catch (Exception e) {
-            throw new RuntimeException("Error when encoding password", e);
-        }
-    }
-
     private JSONObject callAPI(final String path) {
         return callAPI(path, "");
     }
 
     private JSONObject callAPI(final String path, final String data) {
         try {
-            final HttpPost post = new HttpPost("http://game05.wordfeud.com/wf" + path);
-            post.addHeader("Content-Type", "application/json");
-            post.addHeader("Accept", "application/json");
-            final HttpEntity entity = new StringEntity(data, "UTF-8");
-            post.setEntity(entity);
+            final HttpPost post = createPost(path, data);
 
             if (sessionId != null) {
                 post.addHeader("Cookie", "sessiond=" + sessionId);
@@ -374,18 +381,7 @@ public class WordFeudClient {
             final HttpResponse response = httpClient.execute(post);
 
             if (response.getStatusLine().getStatusCode() == 200) {
-                final Header[] cookies = response.getHeaders("Set-Cookie");
-                if (cookies != null && cookies.length > 0) {
-                    sessionId = extractSessionIdFromCookie(cookies[0]);
-                }
-                final String responseString = IOUtils.toString(response.getEntity().getContent());
-                final JSONObject jsonObject = new JSONObject(responseString);
-
-                if (!"success".equals(jsonObject.getString("status"))) {
-                    throw new WordFeudException("Error when calling API: " + jsonObject.getJSONObject("content").getString("type"));
-                }
-
-                return jsonObject;
+                return handleResponse(response);
             } else {
                 throw new WordFeudException("Got unexpected HTTP " + response.getStatusLine().getStatusCode() + ": " + response.toString());
             }
@@ -399,6 +395,30 @@ public class WordFeudClient {
         }
     }
 
+    private JSONObject handleResponse(final HttpResponse response) throws IOException, JSONException {
+        checkCookieHeader(response);
+
+        final JSONObject jsonObject = extractJsonFromResponse(response);
+
+        if (!"success".equals(jsonObject.getString("status"))) {
+            throw new WordFeudException("Error when calling API: " + jsonObject.getJSONObject("content").getString("type"));
+        }
+
+        return jsonObject;
+    }
+
+    private JSONObject extractJsonFromResponse(final HttpResponse response) throws IOException, JSONException {
+        final String responseString = IOUtils.toString(response.getEntity().getContent());
+        return new JSONObject(responseString);
+    }
+
+    private void checkCookieHeader(final HttpResponse response) {
+        final Header[] cookies = response.getHeaders("Set-Cookie");
+        if (cookies != null && cookies.length > 0) {
+            sessionId = extractSessionIdFromCookie(cookies[0]);
+        }
+    }
+
     private String extractSessionIdFromCookie(final Header cookie) {
         final String cookieValue = cookie.getValue();
         final Matcher matcher = SESSION_ID_COOKIE_PATTERN.matcher(cookieValue);
@@ -406,5 +426,30 @@ public class WordFeudClient {
             return matcher.group(1);
         }
         return null;
+    }
+
+    private HttpPost createPost(final String path, final String data) throws UnsupportedEncodingException {
+        final HttpPost post = new HttpPost("http://" + calculateHostName() + "/wf" + path);
+        post.addHeader("Content-Type", CONTENT_TYPE_JSON);
+        post.addHeader("Accept", CONTENT_TYPE_JSON);
+        final HttpEntity entity = new StringEntity(data, "UTF-8");
+        post.setEntity(entity);
+        return post;
+    }
+
+    private String calculateHostName() {
+        return "game0" + random(1, 7) + ".wordfeud.com";
+    }
+
+    private String toJSON(final HashMap<String, ?> parameters) {
+        return new JSONObject(parameters).toString();
+    }
+
+    private String encodePassword(final String password) {
+        try {
+            return SHA1.sha1(password + "JarJarBinks9");
+        } catch (Exception e) {
+            throw new RuntimeException("Error when encoding password", e);
+        }
     }
 }

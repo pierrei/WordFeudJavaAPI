@@ -54,12 +54,12 @@ public class Game {
         return tiles;
     }
 
-    public boolean isIsRunning() {
+    public boolean isRunning() {
         return is_running;
     }
 
-    public void setIsRunning(final boolean is_running) {
-        this.is_running = is_running;
+    public void setRunning(final boolean running) {
+        this.is_running = running;
     }
 
     public int getBagCount() {
@@ -130,6 +130,10 @@ public class Game {
 
     public boolean isMyTurn() {
         return is_running && getCurrentPlayer().getId() == loggedInUser.getId();
+    }
+
+    public boolean isInLead() {
+        return getMe().getScore() > getOpponent().getScore();
     }
 
     public int getBoard() {
