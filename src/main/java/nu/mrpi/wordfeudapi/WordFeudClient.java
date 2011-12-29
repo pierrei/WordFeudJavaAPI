@@ -153,7 +153,7 @@ public class WordFeudClient {
         }
     }
 
-    public Game getGame(final int gameId) {
+    public Game getGame(final long gameId) {
         final String path = "/game/" + gameId + "/";
 
         final JSONObject json = callAPI(path);
@@ -228,7 +228,7 @@ public class WordFeudClient {
      * @param word    The whole word to place (including tiles already on the board)
      * @return The placement result
      */
-    public PlaceResult place(final int gameId, final RuleSet ruleset, final Tile[] tiles, final char[] word) {
+    public PlaceResult place(final long gameId, final RuleSet ruleset, final Tile[] tiles, final char[] word) {
         final String path = "/game/" + gameId + "/move/";
 
         final HashMap<String, Object> parameters = new HashMap<String, Object>();
@@ -260,7 +260,7 @@ public class WordFeudClient {
      * @param gameId The id of the game
      * @return The WordFeud API response
      */
-    public String pass(final int gameId) {
+    public String pass(final long gameId) {
         final String path = "/game/" + gameId + "/pass/";
 
         return callAPI(path).toString();
@@ -269,31 +269,34 @@ public class WordFeudClient {
     /**
      * Swap letters in given game
      *
-     * @param game             The game to swap tiles for
-     * @param duplicateLetters The letters to swap
-     * @return The WordFeud API response
+     * @param game The game to swap tiles for
+     * @param tiles The letters to swap
+     * @return The result of the swap
      */
-    public String swap(final Game game, final char[] duplicateLetters) {
-        return swap(game.getId(), game.getRuleset(), duplicateLetters);
+    public SwapResult swap(final Game game, final char[] tiles) {
+        return swap(game.getId(), tiles);
     }
 
     /**
-     * Swap letters in given game
+     * Swap tiles in given game
+     *
      *
      * @param gameId  The id of the game
-     * @param ruleset The ruleset of the game
-     * @param letters The letters to swap
-     * @return The WordFeud API response
+     * @param tiles The tiles to swap
+     * @return The result of the swap
      */
-    public String swap(final int gameId, final RuleSet ruleset, final char[] letters) {
+    public SwapResult swap(final long gameId, final char[] tiles) {
         final String path = "/game/" + gameId + "/swap/";
 
         final HashMap<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("swap", letters);
-        parameters.put("ruleset", ruleset.getApiIntRepresentation());
+        parameters.put("tiles", tiles);
 
         final JSONObject json = callAPI(path, toJSON(parameters));
-        return json.toString();
+        try {
+            return SwapResult.fromJson(json.getString("content"));
+        } catch (JSONException e) {
+            throw new RuntimeException("Could not deserialize JSON", e);
+        }
     }
 
 
@@ -315,7 +318,7 @@ public class WordFeudClient {
      * @param message The message to send
      * @return The WordFeud API response
      */
-    public String chat(final int gameId, final String message) {
+    public String chat(final long gameId, final String message) {
         final String path = "/game/" + gameId + "/chat/send/";
 
         final HashMap<String, Object> parameters = new HashMap<String, Object>();
@@ -341,7 +344,7 @@ public class WordFeudClient {
      * @param gameId The game ID
      * @return The WordFeud API response
      */
-    public String getChatMessages(final int gameId) {
+    public String getChatMessages(final long gameId) {
         final String path = "/game/" + gameId + "/chat/";
 
         final JSONObject json = callAPI(path);

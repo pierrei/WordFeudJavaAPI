@@ -6,7 +6,7 @@ package nu.mrpi.wordfeudapi.domain;
 public class Invite {
     private int id;
     private String inviter;
-    private int ruleset;
+    private byte ruleset;
     private String board_type;
 
     public int getId() {
@@ -18,7 +18,7 @@ public class Invite {
     }
 
     public RuleSet getRuleset() {
-        return RuleSet.fromInt(ruleset);
+        return RuleSet.fromByte(ruleset);
     }
 
     public String getBoardType() {

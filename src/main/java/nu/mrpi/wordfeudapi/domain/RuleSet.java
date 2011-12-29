@@ -36,7 +36,7 @@ public enum RuleSet {
         return locale;
     }
 
-    public static RuleSet fromInt(final int number) {
+    public static RuleSet fromByte(final byte number) {
         for (final RuleSet ruleSet : values()) {
             if (ruleSet.apiIntRepresentation == number) {
                 return ruleSet;

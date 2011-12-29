@@ -12,11 +12,12 @@ public class Game {
     private double updated;
     private Object[][] tiles;
     private boolean is_running;
-    private int bag_count;
-    private int id;
+    private byte end_game;
+    private byte bag_count;
+    private long id;
     private int current_player;
     private PlayerInGame[] players;
-    private int ruleset;
+    private byte ruleset;
     private User loggedInUser;
     private int board;
 
@@ -62,19 +63,23 @@ public class Game {
         this.is_running = running;
     }
 
-    public int getBagCount() {
+    public EndGame getEndGame() {
+        return EndGame.fromByte(end_game);
+    }
+
+    public byte getBagCount() {
         return bag_count;
     }
 
-    public void setBagCount(final int bag_count) {
+    public void setBagCount(final byte bag_count) {
         this.bag_count = bag_count;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(final int id) {
+    public void setId(final long id) {
         this.id = id;
     }
 
@@ -121,7 +126,7 @@ public class Game {
     }
 
     public RuleSet getRuleset() {
-        return RuleSet.fromInt(ruleset);
+        return RuleSet.fromByte(ruleset);
     }
 
     public Locale getLanguageLocale() {
@@ -134,6 +139,14 @@ public class Game {
 
     public boolean isInLead() {
         return getMe().getScore() > getOpponent().getScore();
+    }
+
+    public boolean isSameScore() {
+        return getMe().getScore() == getOpponent().getScore();
+    }
+
+    public boolean isOpponentInLead() {
+        return getOpponent().getScore() > getMe().getScore();
     }
 
     public int getBoard() {
@@ -153,5 +166,17 @@ public class Game {
                 ", ruleset=" + ruleset +
                 ", board=" + board +
                 '}';
+    }
+
+    public boolean isWon() {
+        return !is_running && isInLead();
+    }
+
+    public boolean isLost() {
+        return !is_running && isOpponentInLead();
+    }
+
+    public boolean isTie() {
+        return !is_running && isSameScore();
     }
 }

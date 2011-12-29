@@ -38,4 +38,16 @@ public class NotificationEntry {
     public boolean isChatMessage() {
         return "chat".equals(type);
     }
+
+    @Override
+    public String toString() {
+        return "NotificationEntry{" +
+                "user_id=" + user_id +
+                ", game_id=" + game_id +
+                ", created=" + created +
+                ", username='" + username + '\'' +
+                ", type='" + type + '\'' +
+                ", message='" + message + '\'' +
+                '}';
+    }
 }
