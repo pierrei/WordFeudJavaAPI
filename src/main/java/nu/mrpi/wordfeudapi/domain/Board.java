@@ -10,6 +10,13 @@ import java.util.Arrays;
 public class Board {
     private int[][] board;
 
+    public Board(final int[][] board) {
+        this.board = board;
+    }
+
+    public Board() {
+    }
+
     public int[][] getBoard() {
         return board;
     }

@@ -6,30 +6,30 @@ import java.util.*;
  * @author Pierre Ingmansson
  */
 public class Rack {
-    private char[] rack;
+    private final char[] rack;
 
-    public Rack(char... rack) {
+    public Rack(final char... rack) {
         this.rack = rack;
     }
 
     public boolean hasWildcard() {
-        for (char character : rack) {
+        for (final char character : rack) {
             if (character == Tile.WILDCARD) {
                 return true;
             }
         }
         return false;
     }
-    
+
     public boolean hasDuplicateLetters() {
         return getDuplicateLetters().length > 0;
     }
 
     public char[] getDuplicateLetters() {
-        Set<Character> uniqueLetters = new TreeSet<Character>();
-        List<Character> duplicateLetters = new ArrayList<Character>();
+        final Set<Character> uniqueLetters = new TreeSet<Character>();
+        final List<Character> duplicateLetters = new ArrayList<Character>();
 
-        for (char letter : rack) {
+        for (final char letter : rack) {
             if (letter != Tile.WILDCARD) {
                 if (uniqueLetters.contains(letter)) {
                     duplicateLetters.add(letter);
@@ -42,8 +42,8 @@ public class Rack {
         return convert(duplicateLetters);
     }
 
-    private char[] convert(List<Character> duplicateLetters) {
-        char[] chars = new char[duplicateLetters.size()];
+    private char[] convert(final List<Character> duplicateLetters) {
+        final char[] chars = new char[duplicateLetters.size()];
         for (int i = 0, duplicateLettersSize = duplicateLetters.size(); i < duplicateLettersSize; i++) {
             chars[i] = duplicateLetters.get(i);
         }

@@ -5,11 +5,21 @@ import com.google.gson.Gson;
 /**
  * @author Pierre Ingmansson
  */
-public class User{
+public class User {
     private String username;
     private int id;
     private String email;
     private String sessionId;
+
+    public User(final String username, final int id, final String email, final String sessionId) {
+        this.username = username;
+        this.id = id;
+        this.email = email;
+        this.sessionId = sessionId;
+    }
+
+    public User() {
+    }
 
     public String getUsername() {
         return username;
@@ -27,12 +37,12 @@ public class User{
         return sessionId;
     }
 
-    public void setSessionId(String sessionId) {
+    public void setSessionId(final String sessionId) {
         this.sessionId = sessionId;
     }
 
-    public static User fromJson(String jsonObject) {
-        return new Gson().fromJson(jsonObject, User.class);
+    public static User fromJson(final String json) {
+        return new Gson().fromJson(json, User.class);
     }
 
     @Override

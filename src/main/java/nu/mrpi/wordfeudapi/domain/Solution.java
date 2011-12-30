@@ -1,7 +1,5 @@
 package nu.mrpi.wordfeudapi.domain;
 
-import nu.mrpi.wordfeudapi.domain.Tile;
-
 /**
  * @author Pierre Ingmansson
  */
@@ -11,7 +9,7 @@ public class Solution {
     private final int points;
     private final boolean horizontalWord;
 
-    public Solution(Tile[] tiles, String word, int points, boolean horizontalWord) {
+    public Solution(final Tile[] tiles, final String word, final int points, final boolean horizontalWord) {
         this.tiles = tiles;
         this.word = word;
         this.points = points;

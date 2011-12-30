@@ -45,7 +45,7 @@ public class WordFeudClient {
         final String proxyHost = System.getProperty("proxy.host");
         final String proxyPort = System.getProperty("proxy.port");
         if (proxyHost != null) {
-            HttpHost proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
+            final HttpHost proxy = new HttpHost(proxyHost, Integer.parseInt(proxyPort));
             httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
         }
 
@@ -269,7 +269,7 @@ public class WordFeudClient {
     /**
      * Swap letters in given game
      *
-     * @param game The game to swap tiles for
+     * @param game  The game to swap tiles for
      * @param tiles The letters to swap
      * @return The result of the swap
      */
@@ -280,9 +280,8 @@ public class WordFeudClient {
     /**
      * Swap tiles in given game
      *
-     *
-     * @param gameId  The id of the game
-     * @param tiles The tiles to swap
+     * @param gameId The id of the game
+     * @param tiles  The tiles to swap
      * @return The result of the swap
      */
     public SwapResult swap(final long gameId, final char[] tiles) {

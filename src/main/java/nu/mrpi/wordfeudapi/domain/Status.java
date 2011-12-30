@@ -8,9 +8,18 @@ import java.util.Arrays;
  * @author Pierre Ingmansson
  */
 public class Status {
-    Invite[] invites_received;
-    Invite[] invites_sent;
-    GameInStatus[] games;
+    private Invite[] invites_received;
+    private Invite[] invites_sent;
+    private GameInStatus[] games;
+
+    public Status(final Invite[] invitesReceived, final Invite[] invitesSent, final GameInStatus[] games) {
+        this.invites_received = invitesReceived;
+        this.invites_sent = invitesSent;
+        this.games = games;
+    }
+
+    public Status() {
+    }
 
     public Invite[] getInvitesReceived() {
         return invites_received;

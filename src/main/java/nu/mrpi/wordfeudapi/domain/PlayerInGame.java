@@ -2,6 +2,8 @@ package nu.mrpi.wordfeudapi.domain;
 
 import nu.mrpi.util.ArrayUtil;
 
+import static nu.mrpi.util.DateUtil.format;
+
 /**
  * @author Pierre Ingmansson
  */
@@ -12,6 +14,18 @@ public class PlayerInGame {
     private int id;
     private double avatar_updated;
     private String[] rack;
+
+    public PlayerInGame(final String username, final int position, final int score, final int id, final double avatarUpdated, final String[] rack) {
+        this.username = username;
+        this.position = position;
+        this.score = score;
+        this.id = id;
+        this.avatar_updated = avatarUpdated;
+        this.rack = rack;
+    }
+
+    public PlayerInGame() {
+    }
 
     public String getUsername() {
         return username;
@@ -47,7 +61,7 @@ public class PlayerInGame {
                 ", position=" + position +
                 ", score=" + score +
                 ", id=" + id +
-                ", avatarUpdated=" + avatar_updated +
+                ", avatarUpdated=" + format(avatar_updated) +
                 '}';
     }
 }

@@ -11,6 +11,14 @@ public class Notifications {
     private NotificationEntry[] entries;
     private boolean cutoff;
 
+    public Notifications(final NotificationEntry[] entries, final boolean cutoff) {
+        this.entries = entries;
+        this.cutoff = cutoff;
+    }
+
+    public Notifications() {
+    }
+
     public NotificationEntry[] getEntries() {
         return entries;
     }
@@ -19,7 +27,7 @@ public class Notifications {
         return cutoff;
     }
 
-    public static Notifications fromJson(String jsonString) {
+    public static Notifications fromJson(final String jsonString) {
         return new Gson().fromJson(jsonString, Notifications.class);
     }
 

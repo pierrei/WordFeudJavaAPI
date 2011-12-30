@@ -11,7 +11,7 @@ public enum EndGame {
 
     private final byte apiByteRepresentation;
 
-    EndGame(int apiByteRepresentation) {
+    EndGame(final int apiByteRepresentation) {
         this.apiByteRepresentation = (byte) apiByteRepresentation;
     }
 
@@ -19,7 +19,7 @@ public enum EndGame {
         return apiByteRepresentation;
     }
 
-    public static EndGame fromByte(byte number) {
+    public static EndGame fromByte(final byte number) {
         for (final EndGame endGame : values()) {
             if (endGame.apiByteRepresentation == number) {
                 return endGame;

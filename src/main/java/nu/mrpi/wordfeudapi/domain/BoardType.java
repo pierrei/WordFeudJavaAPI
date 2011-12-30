@@ -1,15 +1,15 @@
 package nu.mrpi.wordfeudapi.domain;
 
 /**
-* @author Pierre Ingmansson
-*/
+ * @author Pierre Ingmansson
+ */
 public enum BoardType {
     Normal("normal"),
     Random("random");
 
     private final String apiStringRepresentation;
 
-    BoardType(String apiStringRepresentation) {
+    BoardType(final String apiStringRepresentation) {
         this.apiStringRepresentation = apiStringRepresentation;
     }
 
@@ -17,8 +17,8 @@ public enum BoardType {
         return apiStringRepresentation;
     }
 
-    public static BoardType fromString(String string) {
-        for (BoardType boardType : values()) {
+    public static BoardType fromString(final String string) {
+        for (final BoardType boardType : values()) {
             if (boardType.toString().equalsIgnoreCase(string)) {
                 return boardType;
             }

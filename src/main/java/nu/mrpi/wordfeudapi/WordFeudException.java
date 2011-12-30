@@ -7,15 +7,15 @@ public class WordFeudException extends RuntimeException {
     public WordFeudException() {
     }
 
-    public WordFeudException(String message) {
+    public WordFeudException(final String message) {
         super(message);
     }
 
-    public WordFeudException(String message, Throwable cause) {
+    public WordFeudException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public WordFeudException(Throwable cause) {
+    public WordFeudException(final Throwable cause) {
         super(cause);
     }
 }
