@@ -2,7 +2,6 @@ package nu.mrpi.wordfeudapi;
 
 import nu.mrpi.util.SHA1;
 import nu.mrpi.wordfeudapi.domain.*;
-import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -12,8 +11,10 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+import sun.misc.BASE64Encoder;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -351,6 +352,23 @@ public class WordFeudClient {
     }
 
     /**
+     * Upload a new avatar
+     *
+     * @param imageData The image data
+     * @return The WordFeud API response
+     */
+    public String uploadAvatar(byte[] imageData) {
+        final String path = "/user/avatar/upload/";
+
+        // TODO Figure out how to generate this image data from an actual image
+
+        final HashMap<String, String> parameters = new HashMap<String, String>();
+        parameters.put("image_data", new BASE64Encoder().encode(imageData));
+
+        return callAPI(path, toJSON(parameters)).toString();
+    }
+
+    /**
      * Create a new account
      *
      * @param username The username of the new user
@@ -385,6 +403,7 @@ public class WordFeudClient {
             if (response.getStatusLine().getStatusCode() == 200) {
                 return handleResponse(response);
             } else {
+                EntityUtils.consume(response.getEntity());
                 throw new WordFeudException("Got unexpected HTTP " + response.getStatusLine().getStatusCode() + ": " + response.toString());
             }
 
@@ -410,7 +429,7 @@ public class WordFeudClient {
     }
 
     private JSONObject extractJsonFromResponse(final HttpResponse response) throws IOException, JSONException {
-        final String responseString = IOUtils.toString(response.getEntity().getContent());
+        final String responseString = EntityUtils.toString(response.getEntity());
         return new JSONObject(responseString);
     }
 
