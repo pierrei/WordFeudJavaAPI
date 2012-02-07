@@ -1,4 +1,4 @@
-package nu.mrpi.wordfeudapi;
+package nu.mrpi.wordfeudapi.exception;
 
 /**
  * @author Pierre Ingmansson

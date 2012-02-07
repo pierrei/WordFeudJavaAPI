@@ -1,5 +1,7 @@
 package nu.mrpi.wordfeudapi;
 
+import nu.mrpi.wordfeudapi.exception.WordFeudLoginRequiredException;
+import nu.mrpi.wordfeudapi.exception.WordFeudException;
 import org.apache.http.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -101,8 +103,14 @@ public class WordFeudHttpCommunicator {
 
         final JSONObject jsonObject = extractJsonFromResponse(response);
 
-        if (!"success".equals(jsonObject.getString("status"))) {
-            throw new WordFeudException("Error when calling API: " + jsonObject.getJSONObject("content").getString("type"));
+        String status = jsonObject.getString("status");
+
+        if (!"success".equals(status)) {
+            String type = jsonObject.getJSONObject("content").getString("type");
+            if ("login_required".equals(type)) {
+                throw new WordFeudLoginRequiredException("Login is required");
+            }
+            throw new WordFeudException("Error when calling API: " + type);
         }
 
         return jsonObject;
