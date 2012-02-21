@@ -1,6 +1,10 @@
 package nu.mrpi.wordfeudapi.domain;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @author Pierre Ingmansson
@@ -19,6 +23,16 @@ public class Rack {
             }
         }
         return false;
+    }
+
+    public int countChar(final char c) {
+        int charCount = 0;
+        for (final char currentChar : rack) {
+            if (c == currentChar) {
+                charCount++;
+            }
+        }
+        return charCount;
     }
 
     public boolean hasDuplicateLetters() {
