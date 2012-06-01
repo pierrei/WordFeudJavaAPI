@@ -18,6 +18,10 @@ public class User {
         this.sessionId = sessionId;
     }
 
+    public User(int id) {
+        this.id = id;
+    }
+
     public User() {
     }
 

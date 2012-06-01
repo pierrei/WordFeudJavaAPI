@@ -3,13 +3,13 @@ package nu.mrpi.wordfeudapi.domain;
 /**
  * @author Pierre Ingmansson
  */
-public class Solution {
+public class TileMove {
     private final Tile[] tiles;
     private final String word;
     private final int points;
     private final boolean horizontalWord;
 
-    public Solution(final Tile[] tiles, final String word, final int points, final boolean horizontalWord) {
+    public TileMove(final Tile[] tiles, final String word, final int points, final boolean horizontalWord) {
         this.tiles = tiles;
         this.word = word;
         this.points = points;

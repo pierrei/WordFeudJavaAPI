@@ -1,4 +1,4 @@
-package nu.mrpi.wordfeudapi;
+package nu.mrpi.wordfeudapi.http;
 
 import nu.mrpi.wordfeudapi.exception.WordFeudLoginRequiredException;
 import nu.mrpi.wordfeudapi.exception.WordFeudException;
@@ -27,7 +27,7 @@ import static nu.mrpi.util.MathUtil.random;
 /**
  * @author Pierre Ingmansson
  */
-public class WordFeudHttpCommunicator {
+public class ApacheHttpClientCommunicator implements HttpCommunicator {
     public static final String CONTENT_TYPE_JSON = "application/json";
 
     public static final String SESSION_COOKIE_NAME = "sessionid";
@@ -38,7 +38,7 @@ public class WordFeudHttpCommunicator {
 
     private String sessionId;
 
-    public WordFeudHttpCommunicator() {
+    public ApacheHttpClientCommunicator() {
         httpClient = createHttpClient();
     }
 
@@ -60,18 +60,22 @@ public class WordFeudHttpCommunicator {
         return httpClient;
     }
 
+    @Override
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
     }
 
+    @Override
     public String getSessionId() {
         return sessionId;
     }
 
+    @Override
     public JSONObject call(final String path) {
         return call(path, "");
     }
 
+    @Override
     public  JSONObject call(final String path, final String data) {
         try {
             final HttpPost post = createPost(path, data);
