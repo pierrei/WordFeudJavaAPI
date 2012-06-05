@@ -3,7 +3,7 @@ package nu.mrpi.wordfeudapi.domain;
 /**
  * @author Pierre Ingmansson
  */
-public class TileMove {
+public class TileMove implements Comparable<TileMove> {
     private final Tile[] tiles;
     private final String word;
     private final int points;
@@ -30,5 +30,10 @@ public class TileMove {
 
     public boolean isHorizontalWord() {
         return horizontalWord;
+    }
+
+    @Override
+    public int compareTo(TileMove other) {
+        return getPoints() - other.getPoints();
     }
 }
