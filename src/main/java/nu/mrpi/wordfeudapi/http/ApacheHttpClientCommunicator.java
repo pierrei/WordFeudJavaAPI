@@ -1,8 +1,19 @@
 package nu.mrpi.wordfeudapi.http;
 
-import nu.mrpi.wordfeudapi.exception.WordFeudLoginRequiredException;
+import static nu.mrpi.util.MathUtil.random;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import nu.mrpi.wordfeudapi.exception.WordFeudException;
-import org.apache.http.*;
+
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ClientConnectionManager;
@@ -16,13 +27,6 @@ import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static nu.mrpi.util.MathUtil.random;
 
 /**
  * @author Pierre Ingmansson
@@ -44,8 +48,7 @@ public class ApacheHttpClientCommunicator implements HttpCommunicator {
 
     private HttpClient createHttpClient() {
         SchemeRegistry schemeRegistry = new SchemeRegistry();
-        schemeRegistry.register(
-                new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
+        schemeRegistry.register(new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
 
         ClientConnectionManager cm = new ThreadSafeClientConnManager(schemeRegistry);
         HttpClient httpClient = new DefaultHttpClient(cm);
@@ -71,12 +74,7 @@ public class ApacheHttpClientCommunicator implements HttpCommunicator {
     }
 
     @Override
-    public JSONObject call(final String path) {
-        return call(path, "");
-    }
-
-    @Override
-    public  JSONObject call(final String path, final String data) {
+    public JSONObject call(final String path, final String data) {
         try {
             final HttpPost post = createPost(path, data);
 
@@ -105,19 +103,7 @@ public class ApacheHttpClientCommunicator implements HttpCommunicator {
     private JSONObject handleResponse(final HttpResponse response) throws IOException, JSONException {
         checkCookieHeader(response);
 
-        final JSONObject jsonObject = extractJsonFromResponse(response);
-
-        String status = jsonObject.getString("status");
-
-        if (!"success".equals(status)) {
-            String type = jsonObject.getJSONObject("content").getString("type");
-            if ("login_required".equals(type)) {
-                throw new WordFeudLoginRequiredException("Login is required");
-            }
-            throw new WordFeudException("Error when calling API: " + type);
-        }
-
-        return jsonObject;
+        return extractJsonFromResponse(response);
     }
 
     private JSONObject extractJsonFromResponse(final HttpResponse response) throws IOException, JSONException {

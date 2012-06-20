@@ -1,21 +1,35 @@
 package nu.mrpi.wordfeudapi;
 
+import java.util.HashMap;
+
 import nu.mrpi.util.SHA1;
-import nu.mrpi.wordfeudapi.domain.*;
+import nu.mrpi.wordfeudapi.domain.Board;
+import nu.mrpi.wordfeudapi.domain.BoardType;
+import nu.mrpi.wordfeudapi.domain.Game;
+import nu.mrpi.wordfeudapi.domain.Notifications;
+import nu.mrpi.wordfeudapi.domain.PlaceResult;
+import nu.mrpi.wordfeudapi.domain.RuleSet;
+import nu.mrpi.wordfeudapi.domain.Status;
+import nu.mrpi.wordfeudapi.domain.SwapResult;
+import nu.mrpi.wordfeudapi.domain.Tile;
+import nu.mrpi.wordfeudapi.domain.TileMove;
+import nu.mrpi.wordfeudapi.domain.User;
+import nu.mrpi.wordfeudapi.exception.WordFeudException;
+import nu.mrpi.wordfeudapi.exception.WordFeudLoginRequiredException;
 import nu.mrpi.wordfeudapi.http.ApacheHttpClientCommunicator;
 import nu.mrpi.wordfeudapi.http.HttpCommunicator;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-import sun.misc.BASE64Encoder;
 
-import java.util.HashMap;
+import sun.misc.BASE64Encoder;
 
 /**
  * @author Pierre Ingmansson
  */
 public class RestWordFeudClient implements WordFeudClient {
-
     private User loggedInUser = null;
+
     private HttpCommunicator wordFeudHttpCommunicator;
 
     public RestWordFeudClient(HttpCommunicator wordFeudHttpCommunicator) {
@@ -55,10 +69,13 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Invite somebody to a game
-     *
-     * @param username  The user to invite
-     * @param ruleset   The ruleset to use for the game
-     * @param boardType The board type
+     * 
+     * @param username
+     *            The user to invite
+     * @param ruleset
+     *            The ruleset to use for the game
+     * @param boardType
+     *            The board type
      * @return The WordFeud API response
      */
     @Override
@@ -76,8 +93,9 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Accept an invite
-     *
-     * @param inviteId The invite ID
+     * 
+     * @param inviteId
+     *            The invite ID
      * @return The id of the game that just started
      */
     @Override
@@ -94,8 +112,9 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Reject an invite
-     *
-     * @param inviteId The invite ID
+     * 
+     * @param inviteId
+     *            The invite ID
      * @return The WordFeud API response
      */
     @Override
@@ -107,7 +126,7 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Get the pending notifications of the current user
-     *
+     * 
      * @return The WordFeud API response
      */
     @Override
@@ -146,11 +165,11 @@ public class RestWordFeudClient implements WordFeudClient {
         }
     }
 
-
     /**
      * Get the board for a given game
-     *
-     * @param game The game to find the board for
+     * 
+     * @param game
+     *            The game to find the board for
      * @return The board
      */
     @Override
@@ -160,8 +179,9 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Get a specific board
-     *
-     * @param boardId The id of the board to get
+     * 
+     * @param boardId
+     *            The id of the board to get
      * @return The WordFeud API response
      */
     @Override
@@ -178,7 +198,7 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Get the status of the current user
-     *
+     * 
      * @return The status
      */
     @Override
@@ -195,9 +215,11 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Make a move for the given game
-     *
-     * @param game The game to make a move for
-     * @param tileMove The move to make
+     * 
+     * @param game
+     *            The game to make a move for
+     * @param tileMove
+     *            The move to make
      * @return The placement result
      */
     @Override
@@ -207,11 +229,15 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Place a word on the board.
-     *
-     * @param gameId  The ID of the game to place the word on
-     * @param ruleset The ruleset the game is using
-     * @param tiles   The tiles to place (only the tiles to be placed = tiles from the users rack)
-     * @param word    The whole word to place (including tiles already on the board)
+     * 
+     * @param gameId
+     *            The ID of the game to place the word on
+     * @param ruleset
+     *            The ruleset the game is using
+     * @param tiles
+     *            The tiles to place (only the tiles to be placed = tiles from the users rack)
+     * @param word
+     *            The whole word to place (including tiles already on the board)
      * @return The placement result
      */
     @Override
@@ -233,8 +259,9 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Pass a game
-     *
-     * @param game The game to pass
+     * 
+     * @param game
+     *            The game to pass
      * @return The WordFeud API response
      */
     @Override
@@ -244,8 +271,9 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Pass a game
-     *
-     * @param gameId The id of the game
+     * 
+     * @param gameId
+     *            The id of the game
      * @return The WordFeud API response
      */
     @Override
@@ -257,9 +285,11 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Swap letters in given game
-     *
-     * @param game  The game to swap tiles for
-     * @param tiles The letters to swap
+     * 
+     * @param game
+     *            The game to swap tiles for
+     * @param tiles
+     *            The letters to swap
      * @return The result of the swap
      */
     @Override
@@ -269,9 +299,11 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Swap tiles in given game
-     *
-     * @param gameId The id of the game
-     * @param tiles  The tiles to swap
+     * 
+     * @param gameId
+     *            The id of the game
+     * @param tiles
+     *            The tiles to swap
      * @return The result of the swap
      */
     @Override
@@ -289,12 +321,13 @@ public class RestWordFeudClient implements WordFeudClient {
         }
     }
 
-
     /**
      * Send a chat message to a game
-     *
-     * @param game    The game to send chat on
-     * @param message The message to send
+     * 
+     * @param game
+     *            The game to send chat on
+     * @param message
+     *            The message to send
      * @return The WordFeud API response
      */
     @Override
@@ -304,9 +337,11 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Send a chat message to a game
-     *
-     * @param gameId  The game ID of the game to send chat on
-     * @param message The message to send
+     * 
+     * @param gameId
+     *            The game ID of the game to send chat on
+     * @param message
+     *            The message to send
      * @return The WordFeud API response
      */
     @Override
@@ -322,8 +357,9 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Get all chat messages from a specific game
-     *
-     * @param game The game to fetch chat messages from
+     * 
+     * @param game
+     *            The game to fetch chat messages from
      * @return The WordFeud API response
      */
     @Override
@@ -333,8 +369,9 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Get all chat messages from a specific game
-     *
-     * @param gameId The game ID
+     * 
+     * @param gameId
+     *            The game ID
      * @return The WordFeud API response
      */
     @Override
@@ -347,8 +384,9 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Upload a new avatar
-     *
-     * @param imageData The image data
+     * 
+     * @param imageData
+     *            The image data
      * @return The WordFeud API response
      */
     @Override
@@ -365,10 +403,13 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Create a new account
-     *
-     * @param username The username of the new user
-     * @param email    The email of the new user
-     * @param password The password of the new user
+     * 
+     * @param username
+     *            The username of the new user
+     * @param email
+     *            The email of the new user
+     * @param password
+     *            The password of the new user
      * @return The WordFeud API response
      */
     @Override
@@ -383,11 +424,27 @@ public class RestWordFeudClient implements WordFeudClient {
     }
 
     private JSONObject callAPI(final String path) {
-        return wordFeudHttpCommunicator.call(path);
+        return callAPI(path, "");
     }
 
     private JSONObject callAPI(final String path, final String data) {
-        return wordFeudHttpCommunicator.call(path, data);
+        JSONObject response = wordFeudHttpCommunicator.call(path, data);
+
+        try {
+            String status = response.getString("status");
+
+            if (!"success".equals(status)) {
+                String type = response.getJSONObject("content").getString("type");
+                if ("login_required".equals(type)) {
+                    throw new WordFeudLoginRequiredException("Login is required", this);
+                }
+                throw new WordFeudException("Error when calling API: " + type);
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException("Could not parse JSON");
+        }
+
+        return response;
     }
 
     private String toJSON(final HashMap<String, ?> parameters) {

@@ -1,21 +1,19 @@
 package nu.mrpi.wordfeudapi.exception;
 
+import nu.mrpi.wordfeudapi.WordFeudClient;
+
 /**
  * @author Pierre Ingmansson
  */
 public class WordFeudLoginRequiredException extends WordFeudException {
-    public WordFeudLoginRequiredException() {
-    }
+    private final WordFeudClient client;
 
-    public WordFeudLoginRequiredException(String message) {
+    public WordFeudLoginRequiredException(String message, WordFeudClient client) {
         super(message);
+        this.client = client;
     }
 
-    public WordFeudLoginRequiredException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public WordFeudLoginRequiredException(Throwable cause) {
-        super(cause);
+    public WordFeudClient getClient() {
+        return client;
     }
 }

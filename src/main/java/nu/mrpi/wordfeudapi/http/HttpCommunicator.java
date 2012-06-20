@@ -10,7 +10,5 @@ public interface HttpCommunicator {
 
     String getSessionId();
 
-    JSONObject call(String path);
-
     JSONObject call(String path, String data);
 }
