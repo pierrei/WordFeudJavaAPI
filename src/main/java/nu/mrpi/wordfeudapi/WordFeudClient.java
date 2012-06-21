@@ -2,6 +2,9 @@ package nu.mrpi.wordfeudapi;
 
 import nu.mrpi.wordfeudapi.domain.*;
 
+import java.io.File;
+import java.io.IOException;
+
 /**
  * @author Pierre Ingmansson
  */
@@ -47,6 +50,8 @@ public interface WordFeudClient {
     String getChatMessages(Game game);
 
     String getChatMessages(long gameId);
+
+    String uploadAvatar(File file) throws IOException;
 
     String uploadAvatar(byte[] imageData);
 

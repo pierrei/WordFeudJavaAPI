@@ -1,5 +1,6 @@
 package nu.mrpi.wordfeudapi;
 
+import java.io.*;
 import java.util.HashMap;
 
 import nu.mrpi.util.SHA1;
@@ -19,6 +20,7 @@ import nu.mrpi.wordfeudapi.exception.WordFeudLoginRequiredException;
 import nu.mrpi.wordfeudapi.http.ApacheHttpClientCommunicator;
 import nu.mrpi.wordfeudapi.http.HttpCommunicator;
 
+import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -383,7 +385,18 @@ public class RestWordFeudClient implements WordFeudClient {
     }
 
     /**
-     * Upload a new avatar
+     * Upload a new avatar of the currently logged in user
+     * @param file The JPEG file (I think it has to be 60x60 as well..)
+     * @return The WordFeud API response
+     * @throws IOException If something bad happened reading the file
+     */
+    @Override
+    public String uploadAvatar(File file) throws IOException {
+        return uploadAvatar(readImage(file));
+    }
+
+    /**
+     * Upload a new avatar of the currently logged in user
      * 
      * @param imageData
      *            The image data
@@ -392,8 +405,6 @@ public class RestWordFeudClient implements WordFeudClient {
     @Override
     public String uploadAvatar(byte[] imageData) {
         final String path = "/user/avatar/upload/";
-
-        // TODO Figure out how to generate this image data from an actual image
 
         final HashMap<String, String> parameters = new HashMap<String, String>();
         parameters.put("image_data", new BASE64Encoder().encode(imageData));
@@ -456,6 +467,17 @@ public class RestWordFeudClient implements WordFeudClient {
             return SHA1.sha1(password + "JarJarBinks9");
         } catch (Exception e) {
             throw new RuntimeException("Error when encoding password", e);
+        }
+    }
+
+    private static byte[] readImage(File file) throws IOException {
+        InputStream is = null;
+        try {
+            is = new FileInputStream(file);
+
+            return IOUtils.toByteArray(is);
+        } finally {
+            IOUtils.closeQuietly(is);
         }
     }
 }
