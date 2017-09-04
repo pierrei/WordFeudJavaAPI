@@ -1,7 +1,5 @@
 package nu.mrpi.wordfeudapi.http;
 
-import static nu.mrpi.util.MathUtil.random;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.regex.Matcher;
@@ -40,7 +38,7 @@ public class ApacheHttpClientCommunicator implements HttpCommunicator {
 
     private final HttpClient httpClient;
 
-    private String sessionId;
+    private String sessionId = "";
 
     public ApacheHttpClientCommunicator() {
         httpClient = createHttpClient();
@@ -77,10 +75,6 @@ public class ApacheHttpClientCommunicator implements HttpCommunicator {
     public JSONObject call(final String path, final String data) {
         try {
             final HttpPost post = createPost(path, data);
-
-            if (sessionId != null) {
-                post.addHeader("Cookie", SESSION_COOKIE_NAME + "=" + sessionId);
-            }
 
             final HttpResponse response = httpClient.execute(post);
 
