@@ -131,6 +131,6 @@ public class ApacheHttpClientCommunicator implements HttpCommunicator {
     }
 
     private String calculateHostName() {
-        return "game0" + random(1, 7) + ".wordfeud.com";
+        return "api.wordfeud.com";
     }
 }
