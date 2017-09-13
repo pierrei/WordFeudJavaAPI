@@ -34,6 +34,6 @@ public class TileMove implements Comparable<TileMove> {
 
     @Override
     public int compareTo(TileMove other) {
-        return getPoints() - other.getPoints();
+        return other.getPoints() - getPoints();
     }
 }
