@@ -11,11 +11,11 @@ public class PlayerInGame {
     private String username;
     private int position;
     private int score;
-    private int id;
+    private long id;
     private double avatar_updated;
     private String[] rack;
 
-    public PlayerInGame(final String username, final int position, final int score, final int id, final double avatarUpdated, final String[] rack) {
+    public PlayerInGame(final String username, final int position, final int score, final long id, final double avatarUpdated, final String[] rack) {
         this.username = username;
         this.position = position;
         this.score = score;
@@ -39,7 +39,7 @@ public class PlayerInGame {
         return score;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 

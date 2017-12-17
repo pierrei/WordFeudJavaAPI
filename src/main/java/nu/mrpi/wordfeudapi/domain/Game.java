@@ -11,7 +11,8 @@ import static nu.mrpi.util.DateUtil.format;
  * @author Pierre Ingmansson
  */
 public class Game {
-    private double updated;
+    private long created;
+    private long updated;
     private Object[][] tiles;
     private boolean is_running;
     private byte end_game;
@@ -23,7 +24,8 @@ public class Game {
     private User loggedInUser;
     private int board;
 
-    public Game(final double updated, final Object[][] tiles, final boolean isRunning, final byte endGame, final byte bagCount, final long id, final int currentPlayer, final PlayerInGame[] players, final byte ruleset, final User loggedInUser, final int board) {
+    public Game(final long created, final long updated, final Object[][] tiles, final boolean isRunning, final byte endGame, final byte bagCount, final long id, final int currentPlayer, final PlayerInGame[] players, final byte ruleset, final User loggedInUser, final int board) {
+        this.created = created;
         this.updated = updated;
         this.tiles = tiles;
         this.is_running = isRunning;
@@ -58,11 +60,19 @@ public class Game {
         this.loggedInUser = loggedInUser;
     }
 
-    public double getUpdated() {
+    public double getCreated() {
+        return created;
+    }
+
+    public void setCreated(final long created) {
+        this.created = created;
+    }
+
+    public long getUpdated() {
         return updated;
     }
 
-    public void setUpdated(final double updated) {
+    public void setUpdated(final long updated) {
         this.updated = updated;
     }
 
@@ -187,7 +197,8 @@ public class Game {
     @Override
     public String toString() {
         return "Game{" +
-                "updated=" + format(updated) +
+                "created=" + format(created) +
+                ", updated=" + format(updated) +
                 ", tiles=" + (tiles == null ? null : Arrays.asList(getTiles())) +
                 ", isRunning=" + is_running +
                 ", bagCount=" + bag_count +

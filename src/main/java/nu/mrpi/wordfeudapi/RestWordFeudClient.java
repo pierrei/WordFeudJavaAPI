@@ -4,17 +4,7 @@ import java.io.*;
 import java.util.HashMap;
 
 import nu.mrpi.util.SHA1;
-import nu.mrpi.wordfeudapi.domain.Board;
-import nu.mrpi.wordfeudapi.domain.BoardType;
-import nu.mrpi.wordfeudapi.domain.Game;
-import nu.mrpi.wordfeudapi.domain.Notifications;
-import nu.mrpi.wordfeudapi.domain.PlaceResult;
-import nu.mrpi.wordfeudapi.domain.RuleSet;
-import nu.mrpi.wordfeudapi.domain.Status;
-import nu.mrpi.wordfeudapi.domain.SwapResult;
-import nu.mrpi.wordfeudapi.domain.Tile;
-import nu.mrpi.wordfeudapi.domain.TileMove;
-import nu.mrpi.wordfeudapi.domain.User;
+import nu.mrpi.wordfeudapi.domain.*;
 import nu.mrpi.wordfeudapi.exception.WordFeudException;
 import nu.mrpi.wordfeudapi.exception.WordFeudLoginRequiredException;
 import nu.mrpi.wordfeudapi.http.ApacheHttpClientCommunicator;
@@ -101,12 +91,12 @@ public class RestWordFeudClient implements WordFeudClient {
      * @return The id of the game that just started
      */
     @Override
-    public int acceptInvite(final int inviteId) {
+    public long acceptInvite(final long inviteId) {
         // 'access_denied'
         final String path = "/invite/" + inviteId + "/accept/";
 
         try {
-            return callAPI(path).getJSONObject("content").getInt("id");
+            return callAPI(path).getJSONObject("content").getLong("id");
         } catch (JSONException e) {
             throw new RuntimeException("Could not deserialize JSON", e);
         }
@@ -120,7 +110,7 @@ public class RestWordFeudClient implements WordFeudClient {
      * @return The WordFeud API response
      */
     @Override
-    public String rejectInvite(final int inviteId) {
+    public String rejectInvite(final long inviteId) {
         final String path = "/invite/" + inviteId + "/reject/";
 
         return callAPI(path).toString();

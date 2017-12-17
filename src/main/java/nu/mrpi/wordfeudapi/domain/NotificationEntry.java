@@ -6,14 +6,14 @@ import static nu.mrpi.util.DateUtil.format;
  * @author Pierre Ingmansson
  */
 public class NotificationEntry {
-    private int user_id;
-    private int game_id;
+    private long user_id;
+    private long game_id;
     private double created;
     private String username;
     private String type;
     private String message;
 
-    public NotificationEntry(final int userId, final int gameId, final double created, final String username, final String type, final String message) {
+    public NotificationEntry(final long userId, final long gameId, final double created, final String username, final String type, final String message) {
         this.user_id = userId;
         this.game_id = gameId;
         this.created = created;
@@ -25,11 +25,11 @@ public class NotificationEntry {
     public NotificationEntry() {
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return user_id;
     }
 
-    public int getGameId() {
+    public long getGameId() {
         return game_id;
     }
 

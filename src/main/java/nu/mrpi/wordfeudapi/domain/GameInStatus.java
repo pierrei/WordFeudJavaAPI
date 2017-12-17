@@ -6,11 +6,11 @@ import static nu.mrpi.util.DateUtil.format;
  * @author Pierre Ingmansson
  */
 public class GameInStatus {
-    private double updated;
+    private long updated;
     private int chat_count;
-    private int id;
+    private long id;
 
-    public GameInStatus(final int id, final double updated, final int chatCount) {
+    public GameInStatus(final long id, final long updated, final int chatCount) {
         this.id = id;
         this.updated = updated;
         this.chat_count = chatCount;
@@ -19,7 +19,7 @@ public class GameInStatus {
     public GameInStatus() {
     }
 
-    public double getUpdated() {
+    public long getUpdated() {
         return updated;
     }
 
@@ -27,7 +27,7 @@ public class GameInStatus {
         return chat_count;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 

@@ -15,9 +15,9 @@ public interface WordFeudClient {
 
     String invite(String username, RuleSet ruleset, BoardType boardType);
 
-    int acceptInvite(int inviteId);
+    long acceptInvite(long inviteId);
 
-    String rejectInvite(int inviteId);
+    String rejectInvite(long inviteId);
 
     Notifications getNotifications();
 

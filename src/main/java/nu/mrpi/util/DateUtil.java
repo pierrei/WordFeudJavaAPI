@@ -40,4 +40,8 @@ public class DateUtil {
     public static String format(final double timestamp) {
         return df.get().format(convert(timestamp));
     }
+
+    public static String format(final long timestamp) {
+        return df.get().format(new Date(timestamp));
+    }
 }

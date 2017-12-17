@@ -7,18 +7,18 @@ import com.google.gson.Gson;
  */
 public class User {
     private String username;
-    private int id;
+    private long id;
     private String email;
     private String sessionId;
 
-    public User(final String username, final int id, final String email, final String sessionId) {
+    public User(final String username, final long id, final String email, final String sessionId) {
         this.username = username;
         this.id = id;
         this.email = email;
         this.sessionId = sessionId;
     }
 
-    public User(int id) {
+    public User(long id) {
         this.id = id;
     }
 
@@ -29,7 +29,7 @@ public class User {
         return username;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 

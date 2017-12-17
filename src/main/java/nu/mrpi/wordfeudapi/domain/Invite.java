@@ -4,12 +4,12 @@ package nu.mrpi.wordfeudapi.domain;
  * @author Pierre Ingmansson
  */
 public class Invite {
-    private int id;
+    private long id;
     private String inviter;
     private byte ruleset;
     private String board_type;
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
