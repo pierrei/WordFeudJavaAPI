@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 /**
  * @author Pierre Ingmansson
@@ -31,7 +32,7 @@ public class GameTest {
             assertEquals(11, game.getTiles()[0].getX());
             assertEquals(2, game.getTiles()[0].getY());
             assertEquals('A', game.getTiles()[0].getCharacter());
-            assertEquals(false, game.getTiles()[0].isWildcard());
+            assertFalse(game.getTiles()[0].isWildcard());
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }

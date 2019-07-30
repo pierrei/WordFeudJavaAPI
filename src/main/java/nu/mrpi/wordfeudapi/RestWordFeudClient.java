@@ -10,11 +10,10 @@ import nu.mrpi.wordfeudapi.exception.WordFeudLoginRequiredException;
 import nu.mrpi.wordfeudapi.http.ApacheHttpClientCommunicator;
 import nu.mrpi.wordfeudapi.http.HttpCommunicator;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import sun.misc.BASE64Encoder;
 
 /**
  * @author Pierre Ingmansson
@@ -50,7 +49,7 @@ public class RestWordFeudClient implements WordFeudClient {
         final JSONObject json = callAPI(path, toJSON(parameters));
 
         try {
-            loggedInUser = User.fromJson(json.getString("content"));
+            loggedInUser = User.fromJson(json.get("content").toString());
             loggedInUser.setSessionId(wordFeudHttpCommunicator.getSessionId());
 
             return loggedInUser;
@@ -61,7 +60,7 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Invite somebody to a game
-     * 
+     *
      * @param username
      *            The user to invite
      * @param ruleset
@@ -85,7 +84,7 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Accept an invite
-     * 
+     *
      * @param inviteId
      *            The invite ID
      * @return The id of the game that just started
@@ -104,7 +103,7 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Reject an invite
-     * 
+     *
      * @param inviteId
      *            The invite ID
      * @return The WordFeud API response
@@ -118,7 +117,7 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Get the pending notifications of the current user
-     * 
+     *
      * @return The WordFeud API response
      */
     @Override
@@ -127,7 +126,7 @@ public class RestWordFeudClient implements WordFeudClient {
 
         final JSONObject json = callAPI(path);
         try {
-            return Notifications.fromJson(json.getString("content"));
+            return Notifications.fromJson(json.get("content").toString());
         } catch (JSONException e) {
             throw new RuntimeException("Could not deserialize JSON", e);
         }
@@ -139,7 +138,7 @@ public class RestWordFeudClient implements WordFeudClient {
 
         final JSONObject json = callAPI(path);
         try {
-            return Game.fromJsonArray(json.getJSONObject("content").getString("games"), loggedInUser);
+            return Game.fromJsonArray(json.getJSONObject("content").get("games").toString(), loggedInUser);
         } catch (JSONException e) {
             throw new RuntimeException("Could not deserialize JSON", e);
         }
@@ -151,7 +150,7 @@ public class RestWordFeudClient implements WordFeudClient {
 
         final JSONObject json = callAPI(path);
         try {
-            return Game.fromJson(json.getJSONObject("content").getString("game"), loggedInUser);
+            return Game.fromJson(json.getJSONObject("content").get("game").toString(), loggedInUser);
         } catch (JSONException e) {
             throw new RuntimeException("Could not deserialize JSON", e);
         }
@@ -159,7 +158,7 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Get the board for a given game
-     * 
+     *
      * @param game
      *            The game to find the board for
      * @return The board
@@ -171,7 +170,7 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Get a specific board
-     * 
+     *
      * @param boardId
      *            The id of the board to get
      * @return The WordFeud API response
@@ -182,7 +181,7 @@ public class RestWordFeudClient implements WordFeudClient {
 
         final JSONObject json = callAPI(path);
         try {
-            return Board.fromJson(json.getString("content"));
+            return Board.fromJson(json.get("content").toString());
         } catch (JSONException e) {
             throw new RuntimeException("Could not deserialize JSON", e);
         }
@@ -190,7 +189,7 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Get the status of the current user
-     * 
+     *
      * @return The status
      */
     @Override
@@ -199,7 +198,7 @@ public class RestWordFeudClient implements WordFeudClient {
 
         final JSONObject json = callAPI(path);
         try {
-            return Status.fromJson(json.getString("content"));
+            return Status.fromJson(json.get("content").toString());
         } catch (JSONException e) {
             throw new RuntimeException("Could not deserialize JSON", e);
         }
@@ -207,7 +206,7 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Make a move for the given game
-     * 
+     *
      * @param game
      *            The game to make a move for
      * @param tileMove
@@ -221,7 +220,7 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Place a word on the board.
-     * 
+     *
      * @param gameId
      *            The ID of the game to place the word on
      * @param ruleset
@@ -243,7 +242,7 @@ public class RestWordFeudClient implements WordFeudClient {
 
         final JSONObject json = callAPI(path, toJSON(parameters));
         try {
-            return PlaceResult.fromJson(json.getString("content"));
+            return PlaceResult.fromJson(json.get("content").toString());
         } catch (JSONException e) {
             throw new RuntimeException("Could not deserialize JSON", e);
         }
@@ -251,7 +250,7 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Pass a game
-     * 
+     *
      * @param game
      *            The game to pass
      * @return The WordFeud API response
@@ -263,7 +262,7 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Pass a game
-     * 
+     *
      * @param gameId
      *            The id of the game
      * @return The WordFeud API response
@@ -277,7 +276,7 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Swap letters in given game
-     * 
+     *
      * @param game
      *            The game to swap tiles for
      * @param tiles
@@ -291,7 +290,7 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Swap tiles in given game
-     * 
+     *
      * @param gameId
      *            The id of the game
      * @param tiles
@@ -307,7 +306,7 @@ public class RestWordFeudClient implements WordFeudClient {
 
         final JSONObject json = callAPI(path, toJSON(parameters));
         try {
-            return SwapResult.fromJson(json.getString("content"));
+            return SwapResult.fromJson(json.get("content").toString());
         } catch (JSONException e) {
             throw new RuntimeException("Could not deserialize JSON", e);
         }
@@ -315,7 +314,7 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Send a chat message to a game
-     * 
+     *
      * @param game
      *            The game to send chat on
      * @param message
@@ -329,7 +328,7 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Send a chat message to a game
-     * 
+     *
      * @param gameId
      *            The game ID of the game to send chat on
      * @param message
@@ -349,7 +348,7 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Get all chat messages from a specific game
-     * 
+     *
      * @param game
      *            The game to fetch chat messages from
      * @return The WordFeud API response
@@ -361,7 +360,7 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Get all chat messages from a specific game
-     * 
+     *
      * @param gameId
      *            The game ID
      * @return The WordFeud API response
@@ -387,7 +386,7 @@ public class RestWordFeudClient implements WordFeudClient {
 
     /**
      * Upload a new avatar of the currently logged in user
-     * 
+     *
      * @param imageData
      *            The image data
      * @return The WordFeud API response
@@ -397,14 +396,14 @@ public class RestWordFeudClient implements WordFeudClient {
         final String path = "/user/avatar/upload/";
 
         final HashMap<String, String> parameters = new HashMap<String, String>();
-        parameters.put("image_data", new BASE64Encoder().encode(imageData));
+        parameters.put("image_data", new String(Base64.encodeBase64(imageData)));
 
         return callAPI(path, toJSON(parameters)).toString();
     }
 
     /**
      * Create a new account
-     * 
+     *
      * @param username
      *            The username of the new user
      * @param email
@@ -424,6 +423,11 @@ public class RestWordFeudClient implements WordFeudClient {
         return callAPI(path, toJSON(parameters)).toString();
     }
 
+    @Override
+    public void resign(final Game game) {
+        // TODO: Implement..
+    }
+
     private JSONObject callAPI(final String path) {
         return callAPI(path, "");
     }
@@ -432,10 +436,10 @@ public class RestWordFeudClient implements WordFeudClient {
         JSONObject response = wordFeudHttpCommunicator.call(path, data);
 
         try {
-            String status = response.getString("status");
+            String status = response.get("status").toString();
 
             if (!"success".equals(status)) {
-                String type = response.getJSONObject("content").getString("type");
+                String type = response.getJSONObject("content").get("type").toString();
                 if ("login_required".equals(type)) {
                     throw new WordFeudLoginRequiredException("Login is required", this);
                 }

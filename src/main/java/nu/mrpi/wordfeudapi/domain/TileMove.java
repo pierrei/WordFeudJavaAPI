@@ -1,5 +1,7 @@
 package nu.mrpi.wordfeudapi.domain;
 
+import java.util.Arrays;
+
 /**
  * @author Pierre Ingmansson
  */
@@ -35,5 +37,15 @@ public class TileMove implements Comparable<TileMove> {
     @Override
     public int compareTo(TileMove other) {
         return other.getPoints() - getPoints();
+    }
+
+    @Override
+    public String toString() {
+        return "TileMove{" +
+               "tiles=" + Arrays.toString(tiles) +
+               ", word='" + word + '\'' +
+               ", points=" + points +
+               ", horizontalWord=" + horizontalWord +
+               '}';
     }
 }

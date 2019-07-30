@@ -56,4 +56,6 @@ public interface WordFeudClient {
     String uploadAvatar(byte[] imageData);
 
     String createAccount(String username, String email, String password);
+
+    void resign(Game game);
 }

@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Locale;
 
 import static nu.mrpi.util.DateUtil.format;
+import static nu.mrpi.wordfeudapi.domain.EndGame.NotOver;
 
 /**
  * @author Pierre Ingmansson
@@ -186,6 +187,10 @@ public class Game {
         return !is_running && isInLead();
     }
 
+    public boolean isGameOver() {
+        return end_game != NotOver.getApiByteRepresentation();
+    }
+
     public boolean isLost() {
         return !is_running && isOpponentInLead();
     }
@@ -200,6 +205,7 @@ public class Game {
                 "created=" + format(created) +
                 ", updated=" + format(updated) +
                 ", tiles=" + (tiles == null ? null : Arrays.asList(getTiles())) +
+                ", endGame=" + getEndGame() +
                 ", isRunning=" + is_running +
                 ", bagCount=" + bag_count +
                 ", id=" + id +

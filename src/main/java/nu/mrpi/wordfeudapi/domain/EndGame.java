@@ -7,7 +7,8 @@ public enum EndGame {
     NotOver(0),
     NormalEnding(1),
     Resign(2),
-    ResignByTimout(3);
+    ResignByTimout(3),
+    OverUnknown(Byte.MAX_VALUE);
 
     private final byte apiByteRepresentation;
 
